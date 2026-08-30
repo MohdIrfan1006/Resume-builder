@@ -1,0 +1,212 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f2f2f2;
+}
+
+.app {
+  padding: 30px;
+}
+
+.app > h1 {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.resume-container {
+  display: flex;
+  gap: 30px;
+  max-width: 1300px;
+  margin: auto;
+  align-items: flex-start;
+}
+
+.form-section {
+  width: 50%;
+  background: white;
+  padding: 25px;
+  border-radius: 10px;
+}
+
+.preview-wrapper {
+  width: 50%;
+  position: sticky;
+  top: 20px;
+}
+
+.form-section label {
+  display: block;
+  margin-top: 15px;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.form-section input,
+.form-section textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+.form-section textarea {
+  height: 80px;
+  resize: vertical;
+}
+
+.form-section h2 {
+  margin-top: 30px;
+  border-bottom: 2px solid #333;
+  padding-bottom: 8px;
+}
+
+.dynamic-block {
+  background: #fafafa;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 15px;
+  margin-top: 15px;
+  position: relative;
+}
+
+.add-btn {
+  margin-top: 15px;
+  padding: 8px 16px;
+  background: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.add-btn:hover {
+  background: #1e4fc4;
+}
+
+.remove-btn {
+  margin-top: 10px;
+  padding: 6px 12px;
+  background: #e11d48;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.skills-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.tag {
+  background: #e0e7ff;
+  color: #1e3a8a;
+  padding: 5px 10px;
+  border-radius: 15px;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tag button {
+  background: none;
+  border: none;
+  color: #1e3a8a;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+/* PREVIEW / RESUME */
+
+.download-btn {
+  margin-bottom: 12px;
+  padding: 10px 20px;
+  background: #16a34a;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  width: 100%;
+}
+
+.download-btn:hover {
+  background: #128038;
+}
+
+.preview-section {
+  background: white;
+  padding: 40px;
+  border-radius: 10px;
+  min-height: 800px;
+  max-width: 210mm;
+  margin: auto;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.preview-section h1 {
+  margin: 0 0 5px 0;
+  font-family: Georgia, serif;
+  text-align: center;
+}
+
+.contact-line {
+  font-size: 14px;
+  color: #444;
+  margin: 3px 0;
+  text-align: center;
+}
+
+.preview-section h3 {
+  margin-top: 20px;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  font-size: 15px;
+  letter-spacing: 1px;
+  color: #1e3a8a;
+}
+
+.preview-block {
+  margin-bottom: 12px;
+}
+
+.block-title {
+  font-weight: bold;
+  margin: 0;
+}
+
+.block-sub {
+  font-size: 13px;
+  color: #666;
+  margin: 2px 0;
+}
+
+.preview-skills {
+  margin-top: 5px;
+}
+
+.preview-tag {
+  background: #f1f5f9;
+  color: #333;
+  border: 1px solid #ccc;
+}
+
+/* Print styling */
+@media print {
+  .download-btn {
+    display: none;
+  }
+  .preview-section {
+    box-shadow: none;
+  }
+}
