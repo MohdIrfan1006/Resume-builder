@@ -12,6 +12,9 @@ function App() {
   const [github, setGithub] = useState("");
   const [objective, setObjective] = useState("");
   const [isLoaded, setIsLoaded] = useState(false);
+  const [template, setTemplate] = useState("modern");
+  const [errors, setErrors] = useState({});
+  const [atsMode, setAtsMode] = useState(false);
 
   // Dynamic Sections
   const [experience, setExperience] = useState([
@@ -38,6 +41,7 @@ function App() {
       setLinkedin(data.linkedin || "");
       setGithub(data.github || "");
       setObjective(data.objective || "");
+      setTemplate(data.template || "modern");
       setExperience(
         data.experience || [
           { company: "", role: "", duration: "", description: "" },
@@ -65,6 +69,7 @@ function App() {
       education,
       skills,
       projects,
+      template,
     };
     localStorage.setItem("resumeData", JSON.stringify(resumeData));
   }, [
@@ -80,6 +85,7 @@ function App() {
     education,
     skills,
     projects,
+    template,
   ]);
 
   // ---- Experience handlers ----
@@ -137,10 +143,33 @@ function App() {
 
   // ---- PDF Export ----
   const resumeRef = useRef();
+  const validateForm = () => {
+    const newErrors = {};
+
+    if (!name.trim()) newErrors.name = "Name is required";
+    if (!email.trim()) {
+      newErrors.email = "Email is required";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      newErrors.email = "Enter a valid email";
+    }
+    if (!phone.trim()) {
+      newErrors.phone = "Phone is required";
+    } else if (!/^[0-9]{10}$/.test(phone)) {
+      newErrors.phone = "Enter a valid 10-digit phone number";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
   const handlePrint = useReactToPrint({
     contentRef: resumeRef,
     documentTitle: `${name || "Resume"}`,
   });
+  const handleDownloadClick = () => {
+    if (validateForm()) {
+      handlePrint();
+    }
+  };
 
   return (
     <div className="app">
@@ -157,7 +186,9 @@ function App() {
             placeholder="Enter your name"
             value={name}
             onChange={(e) => setName(e.target.value)}
+            className={errors.name ? "input-error" : ""}
           />
+          {errors.name && <p className="error-text">{errors.name}</p>}
 
           <label>Email</label>
           <input
@@ -165,7 +196,9 @@ function App() {
             placeholder="Enter your email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            className={errors.email ? "input-error" : ""}
           />
+          {errors.email && <p className="error-text">{errors.email}</p>}
 
           <label>Phone</label>
           <input
@@ -173,7 +206,9 @@ function App() {
             placeholder="Enter your phone number"
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
+            className={errors.phone ? "input-error" : ""}
           />
+          {errors.phone && <p className="error-text">{errors.phone}</p>}
 
           <label>Address</label>
           <input
@@ -373,15 +408,52 @@ function App() {
 
         {/* RIGHT SIDE - RESUME PREVIEW */}
         <div className="preview-wrapper">
-          <button className="download-btn" onClick={handlePrint}>
+          <div className="template-switcher">
+            <button
+              className={template === "modern" ? "active" : ""}
+              onClick={() => setTemplate("modern")}
+            >
+              Modern
+            </button>
+            <button
+              className={template === "classic" ? "active" : ""}
+              onClick={() => setTemplate("classic")}
+            >
+              Classic
+            </button>
+            <button
+              className={template === "minimal" ? "active" : ""}
+              onClick={() => setTemplate("minimal")}
+            >
+              Minimal
+            </button>
+          </div>
+          <label className="ats-toggle">
+            <input
+              type="checkbox"
+              checked={atsMode}
+              onChange={(e) => setAtsMode(e.target.checked)}
+            />
+            ATS-Safe Mode (plain formatting for job portals)
+          </label>
+          <button className="download-btn" onClick={handleDownloadClick}>
             Download PDF
           </button>
 
-          <div className="preview-section" ref={resumeRef}>
+          <div
+            className={`preview-section template-${template} ${atsMode ? "ats-mode" : ""}`}
+            ref={resumeRef}
+          >
             <h1>{name || "Your Name"}</h1>
             <p className="contact-line">
-              {email || "your@email.com"} | {phone || "9876543210"} |{" "}
-              {address || "Your Address"}
+              {atsMode ? (
+                `${email || "your@email.com"}   ${phone || "9876543210"}   ${address || "Your Address"}`
+              ) : (
+                <>
+                  {email || "your@email.com"} | {phone || "9876543210"} |{" "}
+                  {address || "Your Address"}
+                </>
+              )}
             </p>
             <p className="contact-line">
               {linkedin || "LinkedIn"} | {github || "GitHub"}
