@@ -360,3 +360,85 @@ body {
 .ats-mode .tag:last-child::after {
   content: "";
 }
+/* ===== PAGE BREAK HANDLING (for multi-page PDF) ===== */
+@media print {
+  @page {
+    size: A4;
+    margin: 15mm;
+  }
+
+  body {
+    background: white;
+  }
+
+  .preview-section {
+    box-shadow: none;
+    max-width: 100%;
+    padding: 0;
+  }
+
+  /* Ek Experience/Education/Project block kabhi beech se na kate */
+  .preview-block {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  /* Heading (Experience, Education, etc.) apne aap page ke end mein akela na reh jaye */
+  h3 {
+    break-after: avoid;
+    page-break-after: avoid;
+  }
+
+  /* hr lines print mein halki rakho */
+  hr {
+    border-color: #ccc;
+  }
+}
+.dark-toggle {
+  display: block;
+  margin: 0 auto 20px auto;
+  padding: 8px 18px;
+  background: #333;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+/* ===== DARK MODE ===== */
+.app.dark {
+  background: #121212;
+}
+
+.app.dark > h1 {
+  color: white;
+}
+
+.app.dark .form-section {
+  background: #1e1e1e;
+  color: #eee;
+}
+
+.app.dark .form-section label {
+  color: #ccc;
+}
+
+.app.dark .form-section input,
+.app.dark .form-section textarea {
+  background: #2a2a2a;
+  border-color: #444;
+  color: white;
+}
+
+.app.dark .form-section h2 {
+  border-bottom-color: #555;
+  color: white;
+}
+
+.app.dark .dynamic-block {
+  background: #262626;
+  border-color: #444;
+}
+
+/* Preview section white hi rehta hai — kyunki wahi PDF print hoga */

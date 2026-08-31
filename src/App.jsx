@@ -15,6 +15,7 @@ function App() {
   const [template, setTemplate] = useState("modern");
   const [errors, setErrors] = useState({});
   const [atsMode, setAtsMode] = useState(false);
+  const [darkMode, setDarkMode] = useState(false);
 
   // Dynamic Sections
   const [experience, setExperience] = useState([
@@ -42,6 +43,7 @@ function App() {
       setGithub(data.github || "");
       setObjective(data.objective || "");
       setTemplate(data.template || "modern");
+      setDarkMode(data.darkMode || false);
       setExperience(
         data.experience || [
           { company: "", role: "", duration: "", description: "" },
@@ -70,6 +72,7 @@ function App() {
       skills,
       projects,
       template,
+      darkMode,
     };
     localStorage.setItem("resumeData", JSON.stringify(resumeData));
   }, [
@@ -86,6 +89,7 @@ function App() {
     skills,
     projects,
     template,
+    darkMode,
   ]);
 
   // ---- Experience handlers ----
@@ -172,8 +176,11 @@ function App() {
   };
 
   return (
-    <div className="app">
+    <div className={`app ${darkMode ? "dark" : ""}`}>
       <h1>Resume Builder</h1>
+      <button className="dark-toggle" onClick={() => setDarkMode(!darkMode)}>
+        {darkMode ? "☀️ Light Mode" : "🌙 Dark Mode"}
+      </button>
 
       <div className="resume-container">
         {/* LEFT SIDE - FORM */}
