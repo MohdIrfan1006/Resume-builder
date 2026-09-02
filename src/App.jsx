@@ -16,6 +16,8 @@ function App() {
   const [errors, setErrors] = useState({});
   const [atsMode, setAtsMode] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
+  const [savedResumes, setSavedResumes] = useState([]);
+  const [currentResumeName, setCurrentResumeName] = useState("Untitled Resume");
 
   // Dynamic Sections
   const [experience, setExperience] = useState([
@@ -44,6 +46,7 @@ function App() {
       setObjective(data.objective || "");
       setTemplate(data.template || "modern");
       setDarkMode(data.darkMode || false);
+      setAtsMode(data.atsMode || false);
       setExperience(
         data.experience || [
           { company: "", role: "", duration: "", description: "" },
@@ -52,8 +55,16 @@ function App() {
       setEducation(data.education || [{ school: "", degree: "", year: "" }]);
       setSkills(data.skills || []);
       setProjects(data.projects || [{ title: "", description: "", link: "" }]);
+      setCurrentResumeName(data.currentResumeName || "Untitled Resume");
     }
     setIsLoaded(true);
+  }, []);
+
+  useEffect(() => {
+    const list = localStorage.getItem("savedResumesList");
+    if (list) {
+      setSavedResumes(JSON.parse(list));
+    }
   }, []);
 
   // Save data whenever anything changes
@@ -73,6 +84,8 @@ function App() {
       projects,
       template,
       darkMode,
+      atsMode,
+      currentResumeName,
     };
     localStorage.setItem("resumeData", JSON.stringify(resumeData));
   }, [
@@ -90,6 +103,8 @@ function App() {
     projects,
     template,
     darkMode,
+    atsMode,
+    currentResumeName,
   ]);
 
   // ---- Experience handlers ----
@@ -144,6 +159,180 @@ function App() {
   const removeProject = (index) => {
     setProjects(projects.filter((_, i) => i !== index));
   };
+  const calculateResumeScore = () => {
+    let score = 0;
+    const tips = [];
+
+    // Basic info (20 points)
+    if (name.trim()) score += 5;
+    else tips.push("Add your full name");
+    if (email.trim()) score += 5;
+    else tips.push("Add your email");
+    if (phone.trim()) score += 5;
+    else tips.push("Add your phone number");
+    if (linkedin.trim() || github.trim()) score += 5;
+    else
+      tips.push("Add a LinkedIn or GitHub link — recruiters check this first");
+
+    // Career objective (15 points)
+    const objWords = objective.trim().split(/\s+/).filter(Boolean).length;
+    if (objWords >= 15 && objWords <= 50) {
+      score += 15;
+    } else if (objWords > 0) {
+      score += 7;
+      tips.push(
+        "Career objective should be 15-50 words — not too short, not too long",
+      );
+    } else {
+      tips.push(
+        "Write a career objective — it's the first thing recruiters read",
+      );
+    }
+
+    // Experience (25 points)
+    const filledExperience = experience.filter(
+      (e) => e.company.trim() && e.role.trim(),
+    );
+    if (filledExperience.length > 0) {
+      score += 10;
+      const hasNumbers = experience.some((e) => /\d/.test(e.description));
+      if (hasNumbers) {
+        score += 15;
+      } else {
+        score += 5;
+        tips.push(
+          'Add numbers to your experience (e.g. "increased sales by 20%") — this makes it far stronger',
+        );
+      }
+    } else {
+      tips.push("Add at least one work experience or internship");
+    }
+
+    // Education (15 points)
+    const filledEducation = education.filter(
+      (e) => e.school.trim() && e.degree.trim(),
+    );
+    if (filledEducation.length > 0) score += 15;
+    else tips.push("Add your education details");
+
+    // Skills (15 points)
+    if (skills.length >= 5) {
+      score += 15;
+    } else if (skills.length > 0) {
+      score += 7;
+      tips.push(
+        `Add more skills — you have ${skills.length}, aim for at least 5`,
+      );
+    } else {
+      tips.push("Add your key skills");
+    }
+
+    // Projects (10 points)
+    const filledProjects = projects.filter((p) => p.title.trim());
+    if (filledProjects.length > 0) score += 10;
+    else tips.push("Add at least one project — especially useful for freshers");
+
+    return { score: Math.min(score, 100), tips };
+  };
+
+  const { score: resumeScore, tips: resumeTips } = calculateResumeScore();
+
+  // ---- Multiple Resume Save handlers ----
+  const getCurrentResumeData = () => ({
+    name,
+    email,
+    phone,
+    address,
+    linkedin,
+    github,
+    objective,
+    experience,
+    education,
+    skills,
+    projects,
+    template,
+    darkMode,
+    atsMode,
+  });
+
+  const saveResume = () => {
+    const resumeName = prompt("Enter resume name:", currentResumeName);
+    if (!resumeName || !resumeName.trim()) return;
+
+    const trimmedName = resumeName.trim();
+    const data = getCurrentResumeData();
+
+    const list = JSON.parse(localStorage.getItem("savedResumesList") || "[]");
+
+    const existingIndex = list.findIndex((r) => r === trimmedName);
+    if (existingIndex === -1) {
+      list.push(trimmedName);
+    }
+
+    localStorage.setItem("savedResumesList", JSON.stringify(list));
+    localStorage.setItem(`resume_${trimmedName}`, JSON.stringify(data));
+
+    setSavedResumes(list);
+    setCurrentResumeName(trimmedName);
+    alert(`"${trimmedName}" saved successfully!`);
+  };
+
+  const loadResume = (resumeName) => {
+    const saved = localStorage.getItem(`resume_${resumeName}`);
+    if (!saved) return;
+
+    const data = JSON.parse(saved);
+    setName(data.name || "");
+    setEmail(data.email || "");
+    setPhone(data.phone || "");
+    setAddress(data.address || "");
+    setLinkedin(data.linkedin || "");
+    setGithub(data.github || "");
+    setObjective(data.objective || "");
+    setExperience(
+      data.experience || [
+        { company: "", role: "", duration: "", description: "" },
+      ],
+    );
+    setEducation(data.education || [{ school: "", degree: "", year: "" }]);
+    setSkills(data.skills || []);
+    setProjects(data.projects || [{ title: "", description: "", link: "" }]);
+    setTemplate(data.template || "modern");
+    setDarkMode(data.darkMode || false);
+    setAtsMode(data.atsMode || false);
+    setCurrentResumeName(resumeName);
+  };
+
+  const deleteResume = (resumeName) => {
+    const confirmDelete = window.confirm(`Delete "${resumeName}"?`);
+    if (!confirmDelete) return;
+
+    localStorage.removeItem(`resume_${resumeName}`);
+    const list = JSON.parse(localStorage.getItem("savedResumesList") || "[]");
+    const updatedList = list.filter((r) => r !== resumeName);
+    localStorage.setItem("savedResumesList", JSON.stringify(updatedList));
+    setSavedResumes(updatedList);
+  };
+
+  const newResume = () => {
+    const confirmNew = window.confirm(
+      "Start a new blank resume? (Unsaved changes will be lost)",
+    );
+    if (!confirmNew) return;
+
+    setName("");
+    setEmail("");
+    setPhone("");
+    setAddress("");
+    setLinkedin("");
+    setGithub("");
+    setObjective("");
+    setExperience([{ company: "", role: "", duration: "", description: "" }]);
+    setEducation([{ school: "", degree: "", year: "" }]);
+    setSkills([]);
+    setProjects([{ title: "", description: "", link: "" }]);
+    setCurrentResumeName("Untitled Resume");
+  };
 
   // ---- PDF Export ----
   const resumeRef = useRef();
@@ -165,6 +354,7 @@ function App() {
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
+
   const handlePrint = useReactToPrint({
     contentRef: resumeRef,
     documentTitle: `${name || "Resume"}`,
@@ -185,6 +375,33 @@ function App() {
       <div className="resume-container">
         {/* LEFT SIDE - FORM */}
         <div className="form-section">
+          {/* ---- RESUME MANAGER ---- */}
+          <div className="resume-manager">
+            <p className="current-resume-name">📄 {currentResumeName}</p>
+
+            <div className="resume-manager-buttons">
+              <button onClick={saveResume}>💾 Save</button>
+              <button onClick={newResume}>➕ New</button>
+            </div>
+
+            {savedResumes.length > 0 && (
+              <div className="saved-resumes-list">
+                <label>Saved Resumes:</label>
+                {savedResumes.map((r) => (
+                  <div className="saved-resume-item" key={r}>
+                    <span onClick={() => loadResume(r)}>{r}</span>
+                    <button
+                      className="delete-resume-btn"
+                      onClick={() => deleteResume(r)}
+                    >
+                      🗑️
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
           <h2>Enter Your Details</h2>
 
           <label>Full Name</label>
