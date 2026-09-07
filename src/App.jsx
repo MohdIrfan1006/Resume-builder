@@ -159,29 +159,73 @@ function App() {
   const removeProject = (index) => {
     setProjects(projects.filter((_, i) => i !== index));
   };
+
+  // ---- Resume Score ----
   const calculateResumeScore = () => {
     let score = 0;
     const tips = [];
 
+    const isValidEmail = (val) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val.trim());
+    const isValidPhone = (val) => /^[0-9]{10}$/.test(val.trim());
+    const isValidURL = (val) =>
+      /^(https?:\/\/)?(www\.)?[a-zA-Z0-9-]+\.[a-zA-Z]{2,}(\/\S*)?$/.test(
+        val.trim(),
+      );
+    const isRealisticName = (val) =>
+      /^[a-zA-Z\s.'-]{3,}$/.test(val.trim()) &&
+      val.trim().split(/\s+/).length >= 2;
+
     // Basic info (20 points)
-    if (name.trim()) score += 5;
-    else tips.push("Add your full name");
-    if (email.trim()) score += 5;
-    else tips.push("Add your email");
-    if (phone.trim()) score += 5;
-    else tips.push("Add your phone number");
-    if (linkedin.trim() || github.trim()) score += 5;
-    else
+    if (isRealisticName(name)) {
+      score += 5;
+    } else if (name.trim()) {
+      tips.push("Enter your full name properly (first and last name)");
+    } else {
+      tips.push("Add your full name");
+    }
+
+    if (isValidEmail(email)) {
+      score += 5;
+    } else if (email.trim()) {
+      tips.push("Email format looks incorrect (e.g. name@example.com)");
+    } else {
+      tips.push("Add your email");
+    }
+
+    if (isValidPhone(phone)) {
+      score += 5;
+    } else if (phone.trim()) {
+      tips.push("Phone number should be exactly 10 digits");
+    } else {
+      tips.push("Add your phone number");
+    }
+
+    const hasValidLink =
+      (linkedin.trim() && isValidURL(linkedin)) ||
+      (github.trim() && isValidURL(github));
+    if (hasValidLink) {
+      score += 5;
+    } else if (linkedin.trim() || github.trim()) {
+      tips.push("LinkedIn/GitHub link format looks incorrect");
+    } else {
       tips.push("Add a LinkedIn or GitHub link — recruiters check this first");
+    }
 
     // Career objective (15 points)
-    const objWords = objective.trim().split(/\s+/).filter(Boolean).length;
-    if (objWords >= 15 && objWords <= 50) {
+    const objWords = objective.trim().split(/\s+/).filter(Boolean);
+    const objWordCount = objWords.length;
+    const uniqueWords = new Set(objWords.map((w) => w.toLowerCase())).size;
+    const isMeaningfulObjective =
+      objWordCount >= 15 &&
+      objWordCount <= 60 &&
+      uniqueWords / objWordCount > 0.4;
+
+    if (isMeaningfulObjective) {
       score += 15;
-    } else if (objWords > 0) {
-      score += 7;
+    } else if (objWordCount > 0) {
+      score += 3;
       tips.push(
-        "Career objective should be 15-50 words — not too short, not too long",
+        "Career objective should be 15-60 genuine, varied words — avoid repeating the same word or random text",
       );
     } else {
       tips.push(
@@ -191,46 +235,84 @@ function App() {
 
     // Experience (25 points)
     const filledExperience = experience.filter(
-      (e) => e.company.trim() && e.role.trim(),
+      (e) =>
+        e.company.trim().length >= 2 &&
+        e.role.trim().length >= 2 &&
+        e.duration.trim().length >= 3,
     );
     if (filledExperience.length > 0) {
       score += 10;
+      const hasQualityDescription = experience.some(
+        (e) => e.description.trim().split(/\s+/).filter(Boolean).length >= 8,
+      );
       const hasNumbers = experience.some((e) => /\d/.test(e.description));
-      if (hasNumbers) {
+
+      if (hasQualityDescription && hasNumbers) {
         score += 15;
-      } else {
-        score += 5;
+      } else if (hasQualityDescription) {
+        score += 8;
         tips.push(
           'Add numbers to your experience (e.g. "increased sales by 20%") — this makes it far stronger',
         );
+      } else {
+        score += 3;
+        tips.push(
+          "Write a proper description (at least 8 words) for your experience",
+        );
       }
     } else {
-      tips.push("Add at least one work experience or internship");
+      tips.push(
+        "Add at least one work experience with company, role and duration filled properly",
+      );
     }
 
     // Education (15 points)
     const filledEducation = education.filter(
-      (e) => e.school.trim() && e.degree.trim(),
+      (e) =>
+        e.school.trim().length >= 3 &&
+        e.degree.trim().length >= 2 &&
+        /\d{4}/.test(e.year),
     );
-    if (filledEducation.length > 0) score += 15;
-    else tips.push("Add your education details");
+    if (filledEducation.length > 0) {
+      score += 15;
+    } else if (education.some((e) => e.school.trim() || e.degree.trim())) {
+      tips.push(
+        "Fill education properly — school name, degree, and a valid year (e.g. 2021-2025)",
+      );
+    } else {
+      tips.push("Add your education details");
+    }
 
     // Skills (15 points)
-    if (skills.length >= 5) {
+    const validSkills = skills.filter(
+      (s) => s.trim().length >= 2 && /[a-zA-Z]/.test(s),
+    );
+    if (validSkills.length >= 5) {
       score += 15;
-    } else if (skills.length > 0) {
-      score += 7;
+    } else if (validSkills.length > 0) {
+      score += 6;
       tips.push(
-        `Add more skills — you have ${skills.length}, aim for at least 5`,
+        `Add more skills — you have ${validSkills.length}, aim for at least 5`,
       );
     } else {
       tips.push("Add your key skills");
     }
 
     // Projects (10 points)
-    const filledProjects = projects.filter((p) => p.title.trim());
-    if (filledProjects.length > 0) score += 10;
-    else tips.push("Add at least one project — especially useful for freshers");
+    const filledProjects = projects.filter(
+      (p) =>
+        p.title.trim().length >= 3 &&
+        p.description.trim().split(/\s+/).filter(Boolean).length >= 5,
+    );
+    if (filledProjects.length > 0) {
+      score += 10;
+    } else if (projects.some((p) => p.title.trim())) {
+      tips.push(
+        "Add a proper project description (at least 5 words), not just a title",
+      );
+    } else {
+      tips.push("Add at least one project — especially useful for freshers");
+    }
 
     return { score: Math.min(score, 100), tips };
   };
@@ -632,6 +714,35 @@ function App() {
 
         {/* RIGHT SIDE - RESUME PREVIEW */}
         <div className="preview-wrapper">
+          {/* ---- RESUME SCORE ---- */}
+          <div className="score-card">
+            <div className="score-header">
+              <span className="score-label">Resume Score</span>
+              <span
+                className={`score-value ${resumeScore >= 80 ? "score-good" : resumeScore >= 50 ? "score-mid" : "score-low"}`}
+              >
+                {resumeScore}/100
+              </span>
+            </div>
+            <div className="score-bar-track">
+              <div
+                className={`score-bar-fill ${resumeScore >= 80 ? "score-good" : resumeScore >= 50 ? "score-mid" : "score-low"}`}
+                style={{ width: `${resumeScore}%` }}
+              ></div>
+            </div>
+
+            {resumeTips.length > 0 && (
+              <div className="score-tips">
+                <p className="score-tips-title">💡 Suggestions to improve:</p>
+                <ul>
+                  {resumeTips.slice(0, 4).map((tip, i) => (
+                    <li key={i}>{tip}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+
           <div className="template-switcher">
             <button
               className={template === "modern" ? "active" : ""}
