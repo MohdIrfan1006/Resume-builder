@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useReactToPrint } from "react-to-print";
+import Navbar from "./Navbar";
 import "./App.css";
 
 function App() {
@@ -449,41 +450,20 @@ function App() {
 
   return (
     <div className={`app ${darkMode ? "dark" : ""}`}>
-      <h1>Resume Builder</h1>
-      <button className="dark-toggle" onClick={() => setDarkMode(!darkMode)}>
-        {darkMode ? "☀️ Light Mode" : "🌙 Dark Mode"}
-      </button>
+      <Navbar
+        currentResumeName={currentResumeName}
+        savedResumes={savedResumes}
+        darkMode={darkMode}
+        onNewResume={newResume}
+        onSaveResume={saveResume}
+        onLoadResume={loadResume}
+        onDeleteResume={deleteResume}
+        onToggleDarkMode={() => setDarkMode(!darkMode)}
+      />
 
       <div className="resume-container">
         {/* LEFT SIDE - FORM */}
         <div className="form-section">
-          {/* ---- RESUME MANAGER ---- */}
-          <div className="resume-manager">
-            <p className="current-resume-name">📄 {currentResumeName}</p>
-
-            <div className="resume-manager-buttons">
-              <button onClick={saveResume}>💾 Save</button>
-              <button onClick={newResume}>➕ New</button>
-            </div>
-
-            {savedResumes.length > 0 && (
-              <div className="saved-resumes-list">
-                <label>Saved Resumes:</label>
-                {savedResumes.map((r) => (
-                  <div className="saved-resume-item" key={r}>
-                    <span onClick={() => loadResume(r)}>{r}</span>
-                    <button
-                      className="delete-resume-btn"
-                      onClick={() => deleteResume(r)}
-                    >
-                      🗑️
-                    </button>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-
           <h2>Enter Your Details</h2>
 
           <label>Full Name</label>
