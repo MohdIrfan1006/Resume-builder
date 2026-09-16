@@ -450,19 +450,16 @@ body {
     padding: 0;
   }
 
-  /* Ek Experience/Education/Project block kabhi beech se na kate */
   .preview-block {
     break-inside: avoid;
     page-break-inside: avoid;
   }
 
-  /* Heading (Experience, Education, etc.) apne aap page ke end mein akela na reh jaye */
   h3 {
     break-after: avoid;
     page-break-after: avoid;
   }
 
-  /* hr lines print mein halki rakho */
   hr {
     border-color: #ccc;
   }
@@ -481,7 +478,7 @@ body {
 
 /* ===== DARK MODE ===== */
 .app.dark {
-  background: #121212;
+  background: #0d0d15;
 }
 
 .app.dark > h1 {
@@ -610,19 +607,18 @@ body {
 .app.dark .score-tips ul {
   color: #ccc;
 }
-/* ===== NAVBAR (Premium look) ===== */
+/* ===== NAVBAR (Clean/Light look) ===== */
 .navbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-  color: white;
-  padding: 16px 36px;
+  background: #f8fafc;
+  color: #1f2937;
+  padding: 14px 36px;
   position: sticky;
   top: 0;
   z-index: 100;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid #e5e7eb;
 }
 
 .navbar-logo {
@@ -632,26 +628,23 @@ body {
   display: flex;
   align-items: center;
   gap: 8px;
-  background: linear-gradient(90deg, #ffffff, #94a3b8);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: #2563eb;
 }
 
 .navbar-right {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
 }
 
 .navbar-resume-name {
   font-size: 13px;
   font-weight: 500;
-  color: #e2e8f0;
+  color: #4b5563;
   margin-right: 4px;
   padding: 6px 14px;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: white;
+  border: 1px solid #e5e7eb;
   border-radius: 20px;
   max-width: 160px;
   overflow: hidden;
@@ -660,9 +653,9 @@ body {
 }
 
 .navbar-btn {
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  color: #e2e8f0;
+  background: white;
+  border: 1px solid #e5e7eb;
+  color: #374151;
   padding: 8px 16px;
   border-radius: 8px;
   cursor: pointer;
@@ -672,22 +665,18 @@ body {
 }
 
 .navbar-btn:hover {
-  background: rgba(255, 255, 255, 0.14);
-  border-color: rgba(255, 255, 255, 0.25);
-  transform: translateY(-1px);
+  background: #f1f5f9;
+  border-color: #cbd5e1;
 }
 
 .navbar-btn-primary {
-  background: linear-gradient(135deg, #3b82f6, #2563eb);
-  border-color: #3b82f6;
+  background: #2563eb;
+  border-color: #2563eb;
   color: white;
-  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.35);
 }
 
 .navbar-btn-primary:hover {
-  background: linear-gradient(135deg, #4f8ff7, #3b6ff0);
-  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.5);
-  transform: translateY(-1px);
+  background: #1e4fc4;
 }
 
 .navbar-dropdown-wrapper {
@@ -701,7 +690,8 @@ body {
   background: white;
   color: #111;
   border-radius: 10px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+  border: 1px solid #e5e7eb;
   min-width: 220px;
   max-height: 260px;
   overflow-y: auto;
@@ -733,7 +723,7 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 10px;
+  padding: 10px;
   border-radius: 6px;
   cursor: pointer;
   font-size: 14px;
@@ -764,29 +754,75 @@ body {
   opacity: 1;
 }
 
-.navbar-dark-toggle {
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  color: white;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  cursor: pointer;
-  font-size: 15px;
+/* ---- Theme Switch (toggle pill) ---- */
+.navbar-theme-switch {
   display: flex;
   align-items: center;
-  justify-content: center;
-  transition: all 0.2s ease;
+  gap: 8px;
+  cursor: pointer;
+  user-select: none;
 }
 
-.navbar-dark-toggle:hover {
-  background: rgba(255, 255, 255, 0.16);
-  transform: rotate(15deg);
+.switch-track {
+  width: 42px;
+  height: 22px;
+  background: #cbd5e1;
+  border-radius: 20px;
+  padding: 3px;
+  transition: background 0.25s ease;
+  display: flex;
+  align-items: center;
 }
 
+.switch-track.switch-on {
+  background: #2563eb;
+  justify-content: flex-end;
+}
+
+.switch-thumb {
+  width: 16px;
+  height: 16px;
+  background: white;
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  transition: all 0.25s ease;
+}
+
+.switch-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #4b5563;
+  white-space: nowrap;
+}
+
+/* ---- Dark mode ---- */
 .app.dark .navbar {
-  background: linear-gradient(135deg, #000000 0%, #0a0a0a 100%);
-  border-bottom-color: rgba(255, 255, 255, 0.04);
+  background: #16162a;
+  border-bottom-color: rgba(255, 255, 255, 0.08);
+}
+
+.app.dark .navbar-logo {
+  color: #60a5fa;
+}
+
+.app.dark .navbar-resume-name {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.12);
+  color: #cbd5e1;
+}
+
+.app.dark .navbar-btn {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.14);
+  color: #e2e8f0;
+}
+
+.app.dark .navbar-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.app.dark .switch-label {
+  color: #cbd5e1;
 }
 
 .app {
@@ -796,6 +832,8 @@ body {
 .resume-container {
   padding-top: 30px;
 }
+
+
 /* ===== MOBILE RESPONSIVE ===== */
 @media (max-width: 900px) {
   .app {
@@ -898,5 +936,11 @@ body {
 
   .resume-manager-buttons {
     flex-direction: column;
+  }
+
+  .navbar-dropdown {
+    right: -10px;
+    min-width: 180px;
+    max-width: calc(100vw - 20px);
   }
 }
