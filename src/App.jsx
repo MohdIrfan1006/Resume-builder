@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { useReactToPrint } from "react-to-print";
 import Navbar from "./Navbar";
 import "./App.css";
+import AboutPage from "./AboutPage";
 
 function App() {
   // Basic Info
@@ -19,6 +20,7 @@ function App() {
   const [darkMode, setDarkMode] = useState(false);
   const [savedResumes, setSavedResumes] = useState([]);
   const [currentResumeName, setCurrentResumeName] = useState("Untitled Resume");
+  const [currentView, setCurrentView] = useState("home");
 
   // Dynamic Sections
   const [experience, setExperience] = useState([
@@ -459,6 +461,8 @@ function App() {
         onLoadResume={loadResume}
         onDeleteResume={deleteResume}
         onToggleDarkMode={() => setDarkMode(!darkMode)}
+        currentView={currentView}
+        onNavigate={setCurrentView}
       />
 
       <div className="resume-container">

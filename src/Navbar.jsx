@@ -9,6 +9,8 @@ function Navbar({
   onLoadResume,
   onDeleteResume,
   onToggleDarkMode,
+  currentView,
+  onNavigate,
 }) {
   const [showSavedDropdown, setShowSavedDropdown] = useState(false);
 
@@ -16,6 +18,20 @@ function Navbar({
     <nav className="navbar">
       <div className="navbar-left">
         <span className="navbar-logo">🧾 Resume Builder</span>
+        <div className="navbar-links">
+          <span
+            className={`navbar-link ${currentView === "home" ? "navbar-link-active" : ""}`}
+            onClick={() => onNavigate("home")}
+          >
+            Home
+          </span>
+          <span
+            className={`navbar-link ${currentView === "about" ? "navbar-link-active" : ""}`}
+            onClick={() => onNavigate("about")}
+          >
+            About
+          </span>
+        </div>
       </div>
       <div className="navbar-right">
         <span className="navbar-resume-name">{currentResumeName}</span>
@@ -62,9 +78,14 @@ function Navbar({
           )}
         </div>
 
-        <button className="navbar-dark-toggle" onClick={onToggleDarkMode}>
-          {darkMode ? "☀️" : "🌙"}
-        </button>
+        <div className="navbar-theme-switch" onClick={onToggleDarkMode}>
+          <div className={`switch-track ${darkMode ? "switch-on" : ""}`}>
+            <div className="switch-thumb"></div>
+          </div>
+          <span className="switch-label">
+            {darkMode ? "Dark Mode" : "Light Mode"}
+          </span>
+        </div>
       </div>
     </nav>
   );
