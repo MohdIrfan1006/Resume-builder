@@ -3,6 +3,7 @@ import { useReactToPrint } from "react-to-print";
 import Navbar from "./Navbar";
 import "./App.css";
 import AboutPage from "./AboutPage";
+import LandingPage from "./LandingPage";
 
 function App() {
   // Basic Info
@@ -20,7 +21,7 @@ function App() {
   const [darkMode, setDarkMode] = useState(false);
   const [savedResumes, setSavedResumes] = useState([]);
   const [currentResumeName, setCurrentResumeName] = useState("Untitled Resume");
-  const [currentView, setCurrentView] = useState("home");
+  const [currentView, setCurrentView] = useState("landing");
 
   // Dynamic Sections
   const [experience, setExperience] = useState([
@@ -465,377 +466,387 @@ function App() {
         onNavigate={setCurrentView}
       />
 
-      <div className="resume-container">
-        {/* LEFT SIDE - FORM */}
-        <div className="form-section">
-          <h2>Enter Your Details</h2>
+      {currentView === "landing" ? (
+        <LandingPage onStartBuilding={() => setCurrentView("builder")} />
+      ) : currentView === "about" ? (
+        <AboutPage onGetStarted={() => setCurrentView("builder")} />
+      ) : (
+        <div className="resume-container">
+          {/* LEFT SIDE - FORM */}
+          <div className="form-section">
+            <h2>Enter Your Details</h2>
 
-          <label>Full Name</label>
-          <input
-            type="text"
-            placeholder="Enter your name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className={errors.name ? "input-error" : ""}
-          />
-          {errors.name && <p className="error-text">{errors.name}</p>}
-
-          <label>Email</label>
-          <input
-            type="email"
-            placeholder="Enter your email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className={errors.email ? "input-error" : ""}
-          />
-          {errors.email && <p className="error-text">{errors.email}</p>}
-
-          <label>Phone</label>
-          <input
-            type="text"
-            placeholder="Enter your phone number"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            className={errors.phone ? "input-error" : ""}
-          />
-          {errors.phone && <p className="error-text">{errors.phone}</p>}
-
-          <label>Address</label>
-          <input
-            type="text"
-            placeholder="Enter your address"
-            value={address}
-            onChange={(e) => setAddress(e.target.value)}
-          />
-
-          <label>LinkedIn</label>
-          <input
-            type="text"
-            placeholder="Enter your LinkedIn profile link"
-            value={linkedin}
-            onChange={(e) => setLinkedin(e.target.value)}
-          />
-
-          <label>GitHub</label>
-          <input
-            type="text"
-            placeholder="Enter your GitHub profile link"
-            value={github}
-            onChange={(e) => setGithub(e.target.value)}
-          />
-
-          <label>Career Objective</label>
-          <textarea
-            placeholder="Write your career objective"
-            value={objective}
-            onChange={(e) => setObjective(e.target.value)}
-          ></textarea>
-
-          {/* ---- EXPERIENCE ---- */}
-          <h2>Experience</h2>
-          {experience.map((exp, index) => (
-            <div className="dynamic-block" key={index}>
-              <label>Company</label>
-              <input
-                type="text"
-                placeholder="Company Name"
-                value={exp.company}
-                onChange={(e) =>
-                  updateExperience(index, "company", e.target.value)
-                }
-              />
-
-              <label>Role</label>
-              <input
-                type="text"
-                placeholder="Job Title"
-                value={exp.role}
-                onChange={(e) =>
-                  updateExperience(index, "role", e.target.value)
-                }
-              />
-
-              <label>Duration</label>
-              <input
-                type="text"
-                placeholder="e.g. Jan 2023 - Present"
-                value={exp.duration}
-                onChange={(e) =>
-                  updateExperience(index, "duration", e.target.value)
-                }
-              />
-
-              <label>Description</label>
-              <textarea
-                placeholder="What did you do?"
-                value={exp.description}
-                onChange={(e) =>
-                  updateExperience(index, "description", e.target.value)
-                }
-              ></textarea>
-
-              {experience.length > 1 && (
-                <button
-                  className="remove-btn"
-                  onClick={() => removeExperience(index)}
-                >
-                  Remove
-                </button>
-              )}
-            </div>
-          ))}
-          <button className="add-btn" onClick={addExperience}>
-            + Add Experience
-          </button>
-
-          {/* ---- EDUCATION ---- */}
-          <h2>Education</h2>
-          {education.map((edu, index) => (
-            <div className="dynamic-block" key={index}>
-              <label>School / College</label>
-              <input
-                type="text"
-                placeholder="Institution Name"
-                value={edu.school}
-                onChange={(e) =>
-                  updateEducation(index, "school", e.target.value)
-                }
-              />
-
-              <label>Degree</label>
-              <input
-                type="text"
-                placeholder="e.g. B.Tech CSE"
-                value={edu.degree}
-                onChange={(e) =>
-                  updateEducation(index, "degree", e.target.value)
-                }
-              />
-
-              <label>Year</label>
-              <input
-                type="text"
-                placeholder="e.g. 2021 - 2025"
-                value={edu.year}
-                onChange={(e) => updateEducation(index, "year", e.target.value)}
-              />
-
-              {education.length > 1 && (
-                <button
-                  className="remove-btn"
-                  onClick={() => removeEducation(index)}
-                >
-                  Remove
-                </button>
-              )}
-            </div>
-          ))}
-          <button className="add-btn" onClick={addEducation}>
-            + Add Education
-          </button>
-
-          {/* ---- SKILLS ---- */}
-          <h2>Skills</h2>
-          <label>Type a skill and press Enter</label>
-          <input
-            type="text"
-            placeholder="e.g. React"
-            value={skillInput}
-            onChange={(e) => setSkillInput(e.target.value)}
-            onKeyDown={addSkill}
-          />
-          <div className="skills-tags">
-            {skills.map((skill, index) => (
-              <span className="tag" key={index}>
-                {skill} <button onClick={() => removeSkill(index)}>x</button>
-              </span>
-            ))}
-          </div>
-
-          {/* ---- PROJECTS ---- */}
-          <h2>Projects</h2>
-          {projects.map((proj, index) => (
-            <div className="dynamic-block" key={index}>
-              <label>Project Title</label>
-              <input
-                type="text"
-                placeholder="Project Name"
-                value={proj.title}
-                onChange={(e) => updateProject(index, "title", e.target.value)}
-              />
-
-              <label>Description</label>
-              <textarea
-                placeholder="What does it do?"
-                value={proj.description}
-                onChange={(e) =>
-                  updateProject(index, "description", e.target.value)
-                }
-              ></textarea>
-
-              <label>Link</label>
-              <input
-                type="text"
-                placeholder="GitHub / Live link"
-                value={proj.link}
-                onChange={(e) => updateProject(index, "link", e.target.value)}
-              />
-
-              {projects.length > 1 && (
-                <button
-                  className="remove-btn"
-                  onClick={() => removeProject(index)}
-                >
-                  Remove
-                </button>
-              )}
-            </div>
-          ))}
-          <button className="add-btn" onClick={addProject}>
-            + Add Project
-          </button>
-        </div>
-
-        {/* RIGHT SIDE - RESUME PREVIEW */}
-        <div className="preview-wrapper">
-          {/* ---- RESUME SCORE ---- */}
-          <div className="score-card">
-            <div className="score-header">
-              <span className="score-label">Resume Score</span>
-              <span
-                className={`score-value ${resumeScore >= 80 ? "score-good" : resumeScore >= 50 ? "score-mid" : "score-low"}`}
-              >
-                {resumeScore}/100
-              </span>
-            </div>
-            <div className="score-bar-track">
-              <div
-                className={`score-bar-fill ${resumeScore >= 80 ? "score-good" : resumeScore >= 50 ? "score-mid" : "score-low"}`}
-                style={{ width: `${resumeScore}%` }}
-              ></div>
-            </div>
-
-            {resumeTips.length > 0 && (
-              <div className="score-tips">
-                <p className="score-tips-title">💡 Suggestions to improve:</p>
-                <ul>
-                  {resumeTips.slice(0, 4).map((tip, i) => (
-                    <li key={i}>{tip}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </div>
-
-          <div className="template-switcher">
-            <button
-              className={template === "modern" ? "active" : ""}
-              onClick={() => setTemplate("modern")}
-            >
-              Modern
-            </button>
-            <button
-              className={template === "classic" ? "active" : ""}
-              onClick={() => setTemplate("classic")}
-            >
-              Classic
-            </button>
-            <button
-              className={template === "minimal" ? "active" : ""}
-              onClick={() => setTemplate("minimal")}
-            >
-              Minimal
-            </button>
-          </div>
-          <label className="ats-toggle">
+            <label>Full Name</label>
             <input
-              type="checkbox"
-              checked={atsMode}
-              onChange={(e) => setAtsMode(e.target.checked)}
+              type="text"
+              placeholder="Enter your name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className={errors.name ? "input-error" : ""}
             />
-            ATS-Safe Mode (plain formatting for job portals)
-          </label>
-          <button className="download-btn" onClick={handleDownloadClick}>
-            Download PDF
-          </button>
+            {errors.name && <p className="error-text">{errors.name}</p>}
 
-          <div
-            className={`preview-section template-${template} ${atsMode ? "ats-mode" : ""}`}
-            ref={resumeRef}
-          >
-            <h1>{name || "Your Name"}</h1>
-            <p className="contact-line">
-              {atsMode ? (
-                `${email || "your@email.com"}   ${phone || "9876543210"}   ${address || "Your Address"}`
-              ) : (
-                <>
-                  {email || "your@email.com"} | {phone || "9876543210"} |{" "}
-                  {address || "Your Address"}
-                </>
-              )}
-            </p>
-            <p className="contact-line">
-              {linkedin || "LinkedIn"} | {github || "GitHub"}
-            </p>
+            <label>Email</label>
+            <input
+              type="email"
+              placeholder="Enter your email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className={errors.email ? "input-error" : ""}
+            />
+            {errors.email && <p className="error-text">{errors.email}</p>}
 
-            <hr />
+            <label>Phone</label>
+            <input
+              type="text"
+              placeholder="Enter your phone number"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              className={errors.phone ? "input-error" : ""}
+            />
+            {errors.phone && <p className="error-text">{errors.phone}</p>}
 
-            <h3>Career Objective</h3>
-            <p>{objective || "Your career objective will appear here."}</p>
+            <label>Address</label>
+            <input
+              type="text"
+              placeholder="Enter your address"
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+            />
 
-            <hr />
+            <label>LinkedIn</label>
+            <input
+              type="text"
+              placeholder="Enter your LinkedIn profile link"
+              value={linkedin}
+              onChange={(e) => setLinkedin(e.target.value)}
+            />
 
-            <h3>Experience</h3>
+            <label>GitHub</label>
+            <input
+              type="text"
+              placeholder="Enter your GitHub profile link"
+              value={github}
+              onChange={(e) => setGithub(e.target.value)}
+            />
+
+            <label>Career Objective</label>
+            <textarea
+              placeholder="Write your career objective"
+              value={objective}
+              onChange={(e) => setObjective(e.target.value)}
+            ></textarea>
+
+            {/* ---- EXPERIENCE ---- */}
+            <h2>Experience</h2>
             {experience.map((exp, index) => (
-              <div className="preview-block" key={index}>
-                <p className="block-title">
-                  {exp.role || "Role"} — {exp.company || "Company"}
-                </p>
-                <p className="block-sub">{exp.duration || "Duration"}</p>
-                <p>{exp.description || ""}</p>
+              <div className="dynamic-block" key={index}>
+                <label>Company</label>
+                <input
+                  type="text"
+                  placeholder="Company Name"
+                  value={exp.company}
+                  onChange={(e) =>
+                    updateExperience(index, "company", e.target.value)
+                  }
+                />
+
+                <label>Role</label>
+                <input
+                  type="text"
+                  placeholder="Job Title"
+                  value={exp.role}
+                  onChange={(e) =>
+                    updateExperience(index, "role", e.target.value)
+                  }
+                />
+
+                <label>Duration</label>
+                <input
+                  type="text"
+                  placeholder="e.g. Jan 2023 - Present"
+                  value={exp.duration}
+                  onChange={(e) =>
+                    updateExperience(index, "duration", e.target.value)
+                  }
+                />
+
+                <label>Description</label>
+                <textarea
+                  placeholder="What did you do?"
+                  value={exp.description}
+                  onChange={(e) =>
+                    updateExperience(index, "description", e.target.value)
+                  }
+                ></textarea>
+
+                {experience.length > 1 && (
+                  <button
+                    className="remove-btn"
+                    onClick={() => removeExperience(index)}
+                  >
+                    Remove
+                  </button>
+                )}
               </div>
             ))}
+            <button className="add-btn" onClick={addExperience}>
+              + Add Experience
+            </button>
 
-            <hr />
-
-            <h3>Education</h3>
+            {/* ---- EDUCATION ---- */}
+            <h2>Education</h2>
             {education.map((edu, index) => (
-              <div className="preview-block" key={index}>
-                <p className="block-title">{edu.degree || "Degree"}</p>
-                <p className="block-sub">
-                  {edu.school || "School"} | {edu.year || "Year"}
-                </p>
+              <div className="dynamic-block" key={index}>
+                <label>School / College</label>
+                <input
+                  type="text"
+                  placeholder="Institution Name"
+                  value={edu.school}
+                  onChange={(e) =>
+                    updateEducation(index, "school", e.target.value)
+                  }
+                />
+
+                <label>Degree</label>
+                <input
+                  type="text"
+                  placeholder="e.g. B.Tech CSE"
+                  value={edu.degree}
+                  onChange={(e) =>
+                    updateEducation(index, "degree", e.target.value)
+                  }
+                />
+
+                <label>Year</label>
+                <input
+                  type="text"
+                  placeholder="e.g. 2021 - 2025"
+                  value={edu.year}
+                  onChange={(e) =>
+                    updateEducation(index, "year", e.target.value)
+                  }
+                />
+
+                {education.length > 1 && (
+                  <button
+                    className="remove-btn"
+                    onClick={() => removeEducation(index)}
+                  >
+                    Remove
+                  </button>
+                )}
               </div>
             ))}
+            <button className="add-btn" onClick={addEducation}>
+              + Add Education
+            </button>
 
-            <hr />
+            {/* ---- SKILLS ---- */}
+            <h2>Skills</h2>
+            <label>Type a skill and press Enter</label>
+            <input
+              type="text"
+              placeholder="e.g. React"
+              value={skillInput}
+              onChange={(e) => setSkillInput(e.target.value)}
+              onKeyDown={addSkill}
+            />
+            <div className="skills-tags">
+              {skills.map((skill, index) => (
+                <span className="tag" key={index}>
+                  {skill} <button onClick={() => removeSkill(index)}>x</button>
+                </span>
+              ))}
+            </div>
 
-            <h3>Skills</h3>
-            <div className="skills-tags preview-skills">
-              {skills.length > 0 ? (
-                skills.map((skill, index) => (
-                  <span className="tag preview-tag" key={index}>
-                    {skill}
-                  </span>
-                ))
-              ) : (
-                <p>Your skills will appear here.</p>
+            {/* ---- PROJECTS ---- */}
+            <h2>Projects</h2>
+            {projects.map((proj, index) => (
+              <div className="dynamic-block" key={index}>
+                <label>Project Title</label>
+                <input
+                  type="text"
+                  placeholder="Project Name"
+                  value={proj.title}
+                  onChange={(e) =>
+                    updateProject(index, "title", e.target.value)
+                  }
+                />
+
+                <label>Description</label>
+                <textarea
+                  placeholder="What does it do?"
+                  value={proj.description}
+                  onChange={(e) =>
+                    updateProject(index, "description", e.target.value)
+                  }
+                ></textarea>
+
+                <label>Link</label>
+                <input
+                  type="text"
+                  placeholder="GitHub / Live link"
+                  value={proj.link}
+                  onChange={(e) => updateProject(index, "link", e.target.value)}
+                />
+
+                {projects.length > 1 && (
+                  <button
+                    className="remove-btn"
+                    onClick={() => removeProject(index)}
+                  >
+                    Remove
+                  </button>
+                )}
+              </div>
+            ))}
+            <button className="add-btn" onClick={addProject}>
+              + Add Project
+            </button>
+          </div>
+
+          {/* RIGHT SIDE - RESUME PREVIEW */}
+          <div className="preview-wrapper">
+            {/* ---- RESUME SCORE ---- */}
+            <div className="score-card">
+              <div className="score-header">
+                <span className="score-label">Resume Score</span>
+                <span
+                  className={`score-value ${resumeScore >= 80 ? "score-good" : resumeScore >= 50 ? "score-mid" : "score-low"}`}
+                >
+                  {resumeScore}/100
+                </span>
+              </div>
+              <div className="score-bar-track">
+                <div
+                  className={`score-bar-fill ${resumeScore >= 80 ? "score-good" : resumeScore >= 50 ? "score-mid" : "score-low"}`}
+                  style={{ width: `${resumeScore}%` }}
+                ></div>
+              </div>
+
+              {resumeTips.length > 0 && (
+                <div className="score-tips">
+                  <p className="score-tips-title">💡 Suggestions to improve:</p>
+                  <ul>
+                    {resumeTips.slice(0, 4).map((tip, i) => (
+                      <li key={i}>{tip}</li>
+                    ))}
+                  </ul>
+                </div>
               )}
             </div>
 
-            <hr />
+            <div className="template-switcher">
+              <button
+                className={template === "modern" ? "active" : ""}
+                onClick={() => setTemplate("modern")}
+              >
+                Modern
+              </button>
+              <button
+                className={template === "classic" ? "active" : ""}
+                onClick={() => setTemplate("classic")}
+              >
+                Classic
+              </button>
+              <button
+                className={template === "minimal" ? "active" : ""}
+                onClick={() => setTemplate("minimal")}
+              >
+                Minimal
+              </button>
+            </div>
+            <label className="ats-toggle">
+              <input
+                type="checkbox"
+                checked={atsMode}
+                onChange={(e) => setAtsMode(e.target.checked)}
+              />
+              ATS-Safe Mode (plain formatting for job portals)
+            </label>
+            <button className="download-btn" onClick={handleDownloadClick}>
+              Download PDF
+            </button>
 
-            <h3>Projects</h3>
-            {projects.map((proj, index) => (
-              <div className="preview-block" key={index}>
-                <p className="block-title">{proj.title || "Project Title"}</p>
-                <p>{proj.description || ""}</p>
-                {proj.link && <p className="block-sub">{proj.link}</p>}
+            <div
+              className={`preview-section template-${template} ${atsMode ? "ats-mode" : ""}`}
+              ref={resumeRef}
+            >
+              <h1>{name || "Your Name"}</h1>
+              <p className="contact-line">
+                {atsMode ? (
+                  `${email || "your@email.com"}   ${phone || "9876543210"}   ${address || "Your Address"}`
+                ) : (
+                  <>
+                    {email || "your@email.com"} | {phone || "9876543210"} |{" "}
+                    {address || "Your Address"}
+                  </>
+                )}
+              </p>
+              <p className="contact-line">
+                {linkedin || "LinkedIn"} | {github || "GitHub"}
+              </p>
+
+              <hr />
+
+              <h3>Career Objective</h3>
+              <p>{objective || "Your career objective will appear here."}</p>
+
+              <hr />
+
+              <h3>Experience</h3>
+              {experience.map((exp, index) => (
+                <div className="preview-block" key={index}>
+                  <p className="block-title">
+                    {exp.role || "Role"} — {exp.company || "Company"}
+                  </p>
+                  <p className="block-sub">{exp.duration || "Duration"}</p>
+                  <p>{exp.description || ""}</p>
+                </div>
+              ))}
+
+              <hr />
+
+              <h3>Education</h3>
+              {education.map((edu, index) => (
+                <div className="preview-block" key={index}>
+                  <p className="block-title">{edu.degree || "Degree"}</p>
+                  <p className="block-sub">
+                    {edu.school || "School"} | {edu.year || "Year"}
+                  </p>
+                </div>
+              ))}
+
+              <hr />
+
+              <h3>Skills</h3>
+              <div className="skills-tags preview-skills">
+                {skills.length > 0 ? (
+                  skills.map((skill, index) => (
+                    <span className="tag preview-tag" key={index}>
+                      {skill}
+                    </span>
+                  ))
+                ) : (
+                  <p>Your skills will appear here.</p>
+                )}
               </div>
-            ))}
+
+              <hr />
+
+              <h3>Projects</h3>
+              {projects.map((proj, index) => (
+                <div className="preview-block" key={index}>
+                  <p className="block-title">{proj.title || "Project Title"}</p>
+                  <p>{proj.description || ""}</p>
+                  {proj.link && <p className="block-sub">{proj.link}</p>}
+                </div>
+              ))}
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

@@ -20,10 +20,16 @@ function Navbar({
         <span className="navbar-logo">🧾 Resume Builder</span>
         <div className="navbar-links">
           <span
-            className={`navbar-link ${currentView === "home" ? "navbar-link-active" : ""}`}
-            onClick={() => onNavigate("home")}
+            className={`navbar-link ${currentView === "landing" ? "navbar-link-active" : ""}`}
+            onClick={() => onNavigate("landing")}
           >
             Home
+          </span>
+          <span
+            className={`navbar-link ${currentView === "builder" ? "navbar-link-active" : ""}`}
+            onClick={() => onNavigate("builder")}
+          >
+            Builder
           </span>
           <span
             className={`navbar-link ${currentView === "about" ? "navbar-link-active" : ""}`}
