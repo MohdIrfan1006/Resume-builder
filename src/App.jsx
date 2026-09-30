@@ -41,6 +41,7 @@ function App() {
       },
     ],
   };
+
   // Basic Info
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -71,42 +72,7 @@ function App() {
     { title: "", description: "", link: "" },
   ]);
 
-  // Load saved data on first render
-  useEffect(() => {
-    const saved = localStorage.getItem("resumeData");
-    if (saved) {
-      const data = JSON.parse(saved);
-      setName(data.name || "");
-      setEmail(data.email || "");
-      setPhone(data.phone || "");
-      setAddress(data.address || "");
-      setLinkedin(data.linkedin || "");
-      setGithub(data.github || "");
-      setObjective(data.objective || "");
-      setTemplate(data.template || "modern");
-      setDarkMode(data.darkMode || false);
-      setAtsMode(data.atsMode || false);
-      setExperience(
-        data.experience || [
-          { company: "", role: "", duration: "", description: "" },
-        ],
-      );
-      setEducation(data.education || [{ school: "", degree: "", year: "" }]);
-      setSkills(data.skills || []);
-      setProjects(data.projects || [{ title: "", description: "", link: "" }]);
-      setCurrentResumeName(data.currentResumeName || "Untitled Resume");
-    }
-    setIsLoaded(true);
-  }, []);
-
-  useEffect(() => {
-    const list = localStorage.getItem("savedResumesList");
-    if (list) {
-      setSavedResumes(JSON.parse(list));
-    }
-  }, []);
-
-  // Save data whenever anything changes
+  // ---- LOAD saved data on first render (or show sample resume) ----
   useEffect(() => {
     const saved = localStorage.getItem("resumeData");
     if (saved) {
@@ -147,6 +113,55 @@ function App() {
     }
     setIsLoaded(true);
   }, []);
+
+  // ---- Load saved resumes list ----
+  useEffect(() => {
+    const list = localStorage.getItem("savedResumesList");
+    if (list) {
+      setSavedResumes(JSON.parse(list));
+    }
+  }, []);
+
+  // ---- SAVE data whenever anything changes ----
+  useEffect(() => {
+    if (!isLoaded) return;
+    const resumeData = {
+      name,
+      email,
+      phone,
+      address,
+      linkedin,
+      github,
+      objective,
+      experience,
+      education,
+      skills,
+      projects,
+      template,
+      darkMode,
+      atsMode,
+      currentResumeName,
+    };
+    localStorage.setItem("resumeData", JSON.stringify(resumeData));
+  }, [
+    isLoaded,
+    name,
+    email,
+    phone,
+    address,
+    linkedin,
+    github,
+    objective,
+    experience,
+    education,
+    skills,
+    projects,
+    template,
+    darkMode,
+    atsMode,
+    currentResumeName,
+  ]);
+
   // ---- Experience handlers ----
   const addExperience = () => {
     setExperience([
@@ -510,6 +525,13 @@ function App() {
         <div className="resume-container">
           {/* LEFT SIDE - FORM */}
           <div className="form-section">
+            {currentResumeName === "Example Resume" && (
+              <div className="example-banner">
+                👋 This is a sample resume — edit any field to make it yours, or
+                click <strong>"+ New"</strong> to start fresh.
+              </div>
+            )}
+
             <h2>Enter Your Details</h2>
 
             <label>Full Name</label>
