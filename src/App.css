@@ -671,12 +671,12 @@ body {
 
 .navbar-btn-primary {
   background: #2563eb;
-  border-color: #2563eb;
+  border-color: #0952f0;
   color: white;
 }
 
 .navbar-btn-primary:hover {
-  background: #03b231;
+  background: #0952f2;
 }
 
 .navbar-dropdown-wrapper {
