@@ -1,4 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
+
+const LINKS = [
+  ["landing", "Home"],
+  ["builder", "Builder"],
+  ["about", "About"],
+];
 
 function Navbar({
   currentResumeName,
@@ -8,39 +14,77 @@ function Navbar({
   onSaveResume,
   onLoadResume,
   onDeleteResume,
+  onRenameResume,
   onToggleDarkMode,
   currentView,
   onNavigate,
 }) {
   const [showSavedDropdown, setShowSavedDropdown] = useState(false);
+  const [nameDraft, setNameDraft] = useState(currentResumeName);
+  const dropdownRef = useRef(null);
+
+  // Resume load/new hone par naam sync rahe
+  useEffect(() => {
+    setNameDraft(currentResumeName);
+  }, [currentResumeName]);
+
+  // Dropdown ke bahar click karne par band ho jaye
+  useEffect(() => {
+    if (!showSavedDropdown) return;
+    const onMouseDown = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setShowSavedDropdown(false);
+      }
+    };
+    document.addEventListener("mousedown", onMouseDown);
+    return () => document.removeEventListener("mousedown", onMouseDown);
+  }, [showSavedDropdown]);
+
+  const commitName = () => {
+    const trimmed = nameDraft.trim();
+    if (!trimmed) {
+      setNameDraft(currentResumeName);
+      return;
+    }
+    if (trimmed !== currentResumeName) onRenameResume(trimmed);
+  };
 
   return (
     <nav className="navbar">
       <div className="navbar-left">
         <span className="navbar-logo">🧾 Resume Builder</span>
         <div className="navbar-links">
-          <span
-            className={`navbar-link ${currentView === "landing" ? "navbar-link-active" : ""}`}
-            onClick={() => onNavigate("landing")}
-          >
-            Home
-          </span>
-          <span
-            className={`navbar-link ${currentView === "builder" ? "navbar-link-active" : ""}`}
-            onClick={() => onNavigate("builder")}
-          >
-            Builder
-          </span>
-          <span
-            className={`navbar-link ${currentView === "about" ? "navbar-link-active" : ""}`}
-            onClick={() => onNavigate("about")}
-          >
-            About
-          </span>
+          {LINKS.map(([view, label]) => (
+            <button
+              key={view}
+              className={`navbar-link ${currentView === view ? "navbar-link-active" : ""}`}
+              aria-current={currentView === view ? "page" : undefined}
+              onClick={() => onNavigate(view)}
+            >
+              {label}
+            </button>
+          ))}
         </div>
       </div>
+
       <div className="navbar-right">
-        <span className="navbar-resume-name">{currentResumeName}</span>
+        {/* Click karke naam badlo */}
+        <input
+          className="navbar-resume-name"
+          type="text"
+          aria-label="Resume name"
+          title="Click to rename"
+          value={nameDraft}
+          onChange={(e) => setNameDraft(e.target.value)}
+          onBlur={commitName}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") e.currentTarget.blur();
+            if (e.key === "Escape") {
+              setNameDraft(currentResumeName);
+              e.currentTarget.blur();
+            }
+          }}
+        />
 
         <button className="navbar-btn" onClick={onNewResume}>
           + New
@@ -53,9 +97,10 @@ function Navbar({
           Save
         </button>
 
-        <div className="navbar-dropdown-wrapper">
+        <div className="navbar-dropdown-wrapper" ref={dropdownRef}>
           <button
             className="navbar-btn"
+            aria-expanded={showSavedDropdown}
             onClick={() => setShowSavedDropdown(!showSavedDropdown)}
           >
             Saved ({savedResumes.length}) ▾
@@ -68,15 +113,22 @@ function Navbar({
               ) : (
                 savedResumes.map((r) => (
                   <div className="navbar-dropdown-item" key={r}>
-                    <span
+                    <button
+                      className="item-name"
                       onClick={() => {
                         onLoadResume(r);
                         setShowSavedDropdown(false);
                       }}
                     >
                       {r}
-                    </span>
-                    <button onClick={() => onDeleteResume(r)}>🗑️</button>
+                    </button>
+                    <button
+                      className="item-delete"
+                      aria-label={`Delete ${r}`}
+                      onClick={() => onDeleteResume(r)}
+                    >
+                      🗑️
+                    </button>
                   </div>
                 ))
               )}
@@ -84,14 +136,20 @@ function Navbar({
           )}
         </div>
 
-        <div className="navbar-theme-switch" onClick={onToggleDarkMode}>
-          <div className={`switch-track ${darkMode ? "switch-on" : ""}`}>
-            <div className="switch-thumb"></div>
-          </div>
-          <span className="switch-label">
-            {darkMode ? "Dark Mode" : "Light Mode"}
+        <button
+          className="navbar-theme-switch"
+          role="switch"
+          aria-checked={darkMode}
+          aria-label="Dark mode"
+          onClick={onToggleDarkMode}
+        >
+          <span className={`switch-track ${darkMode ? "switch-on" : ""}`}>
+            <span className="switch-thumb"></span>
           </span>
-        </div>
+          <span className="switch-label">
+            {darkMode ? "🌙 Dark" : "☀️ Light"}
+          </span>
+        </button>
       </div>
     </nav>
   );

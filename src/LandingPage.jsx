@@ -1,30 +1,46 @@
 import { useState } from "react";
 
+const FAQS = [
+  {
+    q: "Is this really free to use?",
+    a: "Yes, completely free — no signup, no hidden charges, no watermarks on your downloaded PDF.",
+  },
+  {
+    q: "How does the Resume Score actually work?",
+    a: "It checks formatting rules — valid email and phone format, a meaningful career objective, measurable results in your experience, and more — not just whether a field is empty. It's a guide to help you improve, not a guarantee of how any employer will rate your resume.",
+  },
+  {
+    q: "What is ATS-Safe Mode?",
+    a: "Many companies use ATS (Applicant Tracking System) software to screen resumes before a person reads them. ATS-Safe Mode strips out styling that can confuse these systems — like tags and decorative formatting — and uses standard section headings.",
+  },
+  {
+    q: "Is my data saved anywhere online?",
+    a: "No — everything is stored locally in your browser. Nothing is sent to a server, so your information stays on your device.",
+  },
+  {
+    q: "Can I make multiple resumes for different jobs?",
+    a: "Yes — you can save as many versions as you want, each with a different name, and switch between them anytime from the navbar.",
+  },
+];
+
+const COMPARISON = [
+  [
+    "Feedback on resume quality",
+    "None — just a template",
+    "Real-time score + tips",
+  ],
+  ["ATS-friendly formatting", "Not guaranteed", "One-click ATS-Safe Mode"],
+  ["Multiple resume versions", "Often paywalled", "Unlimited, free"],
+  [
+    "Data privacy",
+    "Often stored on their servers",
+    "Stored only in your browser",
+  ],
+  ["Cost", "Often subscription-based", "100% free"],
+];
+
 function LandingPage({ onStartBuilding }) {
   const [openFaq, setOpenFaq] = useState(null);
-
-  const faqs = [
-    {
-      q: "Is this really free to use?",
-      a: "Yes, completely free — no signup, no hidden charges, no watermarks on your downloaded PDF.",
-    },
-    {
-      q: "How does the Resume Score actually work?",
-      a: "It checks real formatting rules — valid email and phone format, a meaningful career objective, quantified achievements in your experience, and more — not just whether a field is empty.",
-    },
-    {
-      q: "What is ATS-Safe Mode?",
-      a: "Most companies use ATS (Applicant Tracking System) software to filter resumes before a human sees them. ATS-Safe Mode strips out formatting that confuses these systems — like columns and special symbols — so your resume gets through.",
-    },
-    {
-      q: "Is my data saved anywhere online?",
-      a: "No — everything is stored locally in your browser. Nothing is sent to a server, so your information stays private to your device.",
-    },
-    {
-      q: "Can I make multiple resumes for different jobs?",
-      a: "Yes — you can save as many versions as you want, each with a different name, and switch between them anytime from the navbar.",
-    },
-  ];
 
   return (
     <div className="landing-page">
@@ -36,8 +52,8 @@ function LandingPage({ onStartBuilding }) {
           <span className="landing-highlight">Recruiters</span> Actually Notice
         </h1>
         <p className="landing-subtitle">
-          Real-time scoring, ATS-safe formatting, and recruiter-backed feedback
-          — not just another template. Know exactly what to fix before you hit
+          Real-time scoring, ATS-safe formatting, and clear, specific feedback —
+          not just another template. Know exactly what to fix before you hit
           download.
         </p>
         <div className="landing-cta-group">
@@ -48,9 +64,9 @@ function LandingPage({ onStartBuilding }) {
 
         <div className="landing-stats">
           <div className="landing-stat">
-            <span className="landing-stat-number">75%</span>
+            <span className="landing-stat-number">Live</span>
             <span className="landing-stat-label">
-              of resumes get filtered by ATS before a human sees them
+              resume score that updates as you type
             </span>
           </div>
           <div className="landing-stat">
@@ -69,7 +85,7 @@ function LandingPage({ onStartBuilding }) {
       <div className="landing-preview-mockup">
         <div className="mockup-card">
           <div className="mockup-score">
-            <span>Resume Score</span>
+            <span>Resume Score (example)</span>
             <span className="mockup-score-value">92/100</span>
           </div>
           <div className="mockup-bar">
@@ -97,16 +113,16 @@ function LandingPage({ onStartBuilding }) {
             <div className="landing-feature-icon">🎯</div>
             <h3>ATS-Safe Mode</h3>
             <p>
-              One toggle strips your resume to a clean, parseable format that
-              passes filters.
+              One toggle strips your resume to a clean, plain format that
+              automated parsers read easily.
             </p>
           </div>
           <div className="landing-feature">
             <div className="landing-feature-icon">💡</div>
             <h3>Smart Suggestions</h3>
             <p>
-              Specific tips — like adding measurable impact — that actually move
-              the needle.
+              Specific tips — like adding measurable results and replacing weak
+              phrases — that make your points stronger.
             </p>
           </div>
         </div>
@@ -157,25 +173,7 @@ function LandingPage({ onStartBuilding }) {
             <div className="comparison-cell comparison-col-new">This Tool</div>
           </div>
 
-          {[
-            [
-              "Feedback on resume quality",
-              "None — just a template",
-              "Real-time score + tips",
-            ],
-            [
-              "ATS-friendly formatting",
-              "Not guaranteed",
-              "One-click ATS-Safe Mode",
-            ],
-            ["Multiple resume versions", "Often paywalled", "Unlimited, free"],
-            [
-              "Data privacy",
-              "Stored on their servers",
-              "Stored only in your browser",
-            ],
-            ["Cost", "Often subscription-based", "100% free"],
-          ].map((row, i) => (
+          {COMPARISON.map((row, i) => (
             <div className="comparison-row" key={i}>
               <div className="comparison-cell comparison-label-cell">
                 {row[0]}
@@ -195,15 +193,17 @@ function LandingPage({ onStartBuilding }) {
       <div className="landing-faq">
         <h2>Frequently asked questions</h2>
         <div className="faq-list">
-          {faqs.map((item, i) => (
+          {FAQS.map((item, i) => (
             <div className="faq-item" key={i}>
-              <div
+              <button
+                type="button"
                 className="faq-question"
+                aria-expanded={openFaq === i}
                 onClick={() => setOpenFaq(openFaq === i ? null : i)}
               >
                 <span>{item.q}</span>
                 <span className="faq-icon">{openFaq === i ? "−" : "+"}</span>
-              </div>
+              </button>
               {openFaq === i && <div className="faq-answer">{item.a}</div>}
             </div>
           ))}
