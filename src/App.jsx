@@ -4,6 +4,8 @@ import Navbar from "./Navbar";
 import "./App.css";
 import AboutPage from "./AboutPage";
 import LandingPage from "./LandingPage";
+import JDMatch from "./JDMatch.jsx";
+import JDMatch from "./JDMatch.jsx";
 
 /* =====================================================
    HELPERS (component ke bahar — har render par dobara nahi bante)
@@ -1030,6 +1032,9 @@ function App() {
                   </div>
                 )}
               </div>
+              <JDMatch resume={resume} onAddSkill={addSkills} />
+
+              <div className="template-switcher"></div>
 
               <div className="template-switcher">
                 {["modern", "classic", "minimal"].map((t) => (
