@@ -5,7 +5,6 @@ import "./App.css";
 import AboutPage from "./AboutPage";
 import LandingPage from "./LandingPage";
 import JDMatch from "./JDMatch.jsx";
-import JDMatch from "./JDMatch.jsx";
 
 /* =====================================================
    HELPERS (component ke bahar — har render par dobara nahi bante)
