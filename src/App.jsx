@@ -604,6 +604,74 @@ function App() {
     setCurrentResumeName(newName);
     setIsExample(false);
   };
+  // ---- Export / Import (JSON backup) ----
+  const exportResume = () => {
+    const payload = {
+      app: "resume-builder",
+      version: 1,
+      name: currentResumeName,
+      template,
+      atsMode,
+      resume,
+    };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], {
+      type: "application/json",
+    });
+    const url = URL.createObjectURL(blob);
+    const safeName =
+      (currentResumeName || "resume").replace(/[^\p{L}\p{N}_-]+/gu, "_") ||
+      "resume";
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${safeName}.json`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    showToast("Resume exported");
+  };
+
+  const importResume = async (file) => {
+    if (file.size > 2 * 1024 * 1024) {
+      showToast("File is too large for a resume.");
+      return;
+    }
+    try {
+      const data = JSON.parse(await file.text());
+      // Naya export format (data.resume) aur purana raw format dono chalenge
+      const source =
+        data && typeof data === "object" && data.resume ? data.resume : data;
+      const looksValid =
+        source &&
+        typeof source === "object" &&
+        ("name" in source || "experience" in source || "skills" in source);
+      if (!looksValid) {
+        showToast("This doesn't look like a resume file.");
+        return;
+      }
+      if (!window.confirm("Replace the current resume with the imported one?"))
+        return;
+
+      setResume(normalizeResume(source));
+      setTemplate(
+        ["modern", "classic", "minimal"].includes(data.template)
+          ? data.template
+          : "modern",
+      );
+      setAtsMode(!!data.atsMode);
+      setCurrentResumeName(
+        str(data.name).trim() ||
+          file.name.replace(/\.json$/i, "") ||
+          "Imported Resume",
+      );
+      setIsExample(false);
+      setErrors({});
+      setSkillInput("");
+      showToast("Resume imported");
+    } catch {
+      showToast("Couldn't read that file. Is it a valid resume JSON?");
+    }
+  };
 
   // ---- PDF ----
   const validateForm = () => {

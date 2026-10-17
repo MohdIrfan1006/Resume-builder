@@ -15,6 +15,8 @@ function Navbar({
   onLoadResume,
   onDeleteResume,
   onRenameResume,
+  onExportResume,
+  onImportResume,
   onToggleDarkMode,
   currentView,
   onNavigate,
@@ -22,6 +24,7 @@ function Navbar({
   const [showSavedDropdown, setShowSavedDropdown] = useState(false);
   const [nameDraft, setNameDraft] = useState(currentResumeName);
   const dropdownRef = useRef(null);
+  const fileInputRef = useRef(null);
 
   // Resume load/new hone par naam sync rahe
   useEffect(() => {
@@ -47,6 +50,12 @@ function Navbar({
       return;
     }
     if (trimmed !== currentResumeName) onRenameResume(trimmed);
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files && e.target.files[0];
+    if (file) onImportResume(file);
+    e.target.value = ""; // same file dobara bhi choose ho sake
   };
 
   return (
@@ -106,6 +115,15 @@ function Navbar({
             Saved ({savedResumes.length}) ▾
           </button>
 
+          {/* Hidden file input — dropdown ke bahar rakha hai taaki band hone par bhi kaam kare */}
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept=".json,application/json"
+            onChange={handleFileChange}
+            hidden
+          />
+
           {showSavedDropdown && (
             <div className="navbar-dropdown">
               {savedResumes.length === 0 ? (
@@ -132,6 +150,25 @@ function Navbar({
                   </div>
                 ))
               )}
+
+              <div className="navbar-dropdown-footer">
+                <button
+                  onClick={() => {
+                    onExportResume();
+                    setShowSavedDropdown(false);
+                  }}
+                >
+                  ⬇ Export
+                </button>
+                <button
+                  onClick={() => {
+                    setShowSavedDropdown(false);
+                    fileInputRef.current && fileInputRef.current.click();
+                  }}
+                >
+                  ⬆ Import
+                </button>
+              </div>
             </div>
           )}
         </div>

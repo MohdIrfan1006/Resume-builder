@@ -8,8 +8,16 @@ body {
   background: #f2f2f2;
 }
 
+img,
+svg,
+video {
+  max-width: 100%;
+}
+
+/* [RESPONSIVE] kabhi side-scroll na bane (sticky navbar par asar nahi padta) */
 .app {
   padding: 0 0 30px 0;
+  overflow-x: clip;
 }
 
 /* ===== BUILDER LAYOUT ===== */
@@ -18,12 +26,14 @@ body {
   gap: 30px;
   max-width: 1300px;
   margin: auto;
-  padding-top: 30px;
+  padding: 30px 20px 0;
   align-items: flex-start;
 }
 
+/* [RESPONSIVE] width:50% ki jagah flex + min-width:0 */
 .form-section {
-  width: 50%;
+  flex: 1 1 0;
+  min-width: 0;
   background: white;
   padding: 30px;
   border-radius: 14px;
@@ -32,7 +42,8 @@ body {
 }
 
 .preview-wrapper {
-  width: 50%;
+  flex: 1 1 0;
+  min-width: 0;
   position: sticky;
   top: 80px;
 }
@@ -168,6 +179,7 @@ body {
 
 .skill-input-row input {
   flex: 1;
+  min-width: 0;
 }
 
 .skill-add-btn {
@@ -193,6 +205,8 @@ body {
   gap: 8px;
   border: 1px solid #e0e7ff;
   transition: all 0.15s ease;
+  max-width: 100%;
+  overflow-wrap: anywhere;
 }
 
 .tag:hover {
@@ -244,6 +258,8 @@ body {
   margin: auto;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   color: #111;
+  /* [RESPONSIVE] lamba email/link layout na tode */
+  overflow-wrap: anywhere;
 }
 
 .preview-section h1 {
@@ -574,6 +590,134 @@ body {
   text-decoration: underline;
 }
 
+/* ===== JOB MATCH ===== */
+.jd-card {
+  background: white;
+  border-radius: 10px;
+  margin-bottom: 15px;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.08);
+}
+
+.jd-header {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 18px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  color: inherit;
+}
+
+.jd-title {
+  font-weight: bold;
+  font-size: 15px;
+}
+
+.jd-header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.jd-chevron {
+  color: #6b7280;
+}
+
+.jd-body {
+  padding: 0 18px 18px;
+  border-top: 1px solid #eee;
+}
+
+.jd-label {
+  display: block;
+  margin: 14px 0 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.jd-textarea {
+  width: 100%;
+  height: 120px;
+  resize: vertical;
+  padding: 10px 12px;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 13px;
+  color: #1f2937;
+  background: #fafafa;
+}
+
+.jd-textarea:focus {
+  outline: none;
+  border-color: #2563eb;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.jd-hint {
+  font-size: 12px;
+  color: #6b7280;
+  line-height: 1.5;
+  margin: 12px 0 0;
+}
+
+.jd-count {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.jd-section-title {
+  font-size: 13px;
+  font-weight: 700;
+  margin: 16px 0 8px;
+}
+
+.jd-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.jd-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 14px;
+  font-size: 12px;
+  font-weight: 600;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.jd-chip-found {
+  background: #f0fdf4;
+  color: #166534;
+  border: 1px solid #bbf7d0;
+}
+
+.jd-chip-missing {
+  background: #fef2f2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+}
+
+.jd-chip button {
+  background: none;
+  border: none;
+  padding: 0 2px;
+  color: inherit;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+}
+
 /* ===== EXAMPLE BANNER ===== */
 .example-banner {
   background: #fffbeb;
@@ -642,10 +786,13 @@ body {
 }
 
 /* ===== NAVBAR ===== */
+/* [RESPONSIVE] jagah kam ho to wrap ho, kuch bahar na nikle */
 .navbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 10px 16px;
   background: #f8fafc;
   color: #1f2937;
   padding: 14px 36px;
@@ -658,7 +805,8 @@ body {
 .navbar-left {
   display: flex;
   align-items: center;
-  gap: 28px;
+  flex-wrap: wrap;
+  gap: 6px 28px;
 }
 
 .navbar-logo {
@@ -669,6 +817,7 @@ body {
   align-items: center;
   gap: 8px;
   color: #2563eb;
+  white-space: nowrap;
 }
 
 .navbar-links {
@@ -687,6 +836,7 @@ body {
   cursor: pointer;
   padding: 6px 2px;
   transition: all 0.2s ease;
+  white-space: nowrap;
 }
 
 .navbar-link:hover {
@@ -701,7 +851,9 @@ body {
 .navbar-right {
   display: flex;
   align-items: center;
-  gap: 14px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px 14px;
 }
 
 .navbar-resume-name {
@@ -714,7 +866,7 @@ body {
   background: white;
   border: 1px solid #e5e7eb;
   border-radius: 20px;
-  width: 170px;
+  width: clamp(110px, 14vw, 170px);
   text-overflow: ellipsis;
   transition: all 0.2s ease;
 }
@@ -740,6 +892,7 @@ body {
   font-size: 13px;
   font-weight: 600;
   transition: all 0.2s ease;
+  white-space: nowrap;
 }
 
 .navbar-btn:hover {
@@ -771,6 +924,7 @@ body {
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
   border: 1px solid #e5e7eb;
   min-width: 220px;
+  max-width: calc(100vw - 32px);
   max-height: 260px;
   overflow-y: auto;
   padding: 8px;
@@ -841,6 +995,34 @@ body {
   opacity: 1;
 }
 
+/* Export / Import (dropdown footer) */
+.navbar-dropdown-footer {
+  display: flex;
+  gap: 6px;
+  margin-top: 6px;
+  padding-top: 8px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.navbar-dropdown-footer button {
+  flex: 1;
+  padding: 8px;
+  background: #f8fafc;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  color: #374151;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.navbar-dropdown-footer button:hover {
+  background: #eef2ff;
+  border-color: #c7d2fe;
+}
+
 /* ---- Theme switch ---- */
 .navbar-theme-switch {
   display: flex;
@@ -890,6 +1072,7 @@ body {
 .navbar-link:focus-visible,
 .navbar-btn:focus-visible,
 .navbar-theme-switch:focus-visible,
+.navbar-dropdown-footer button:focus-visible,
 .add-btn:focus-visible,
 .remove-btn:focus-visible,
 .download-btn:focus-visible,
@@ -898,7 +1081,9 @@ body {
 .tips-toggle:focus-visible,
 .mobile-tabs button:focus-visible,
 .item-name:focus-visible,
-.item-delete:focus-visible {
+.item-delete:focus-visible,
+.jd-header:focus-visible,
+.jd-chip button:focus-visible {
   outline: 2px solid #2563eb;
   outline-offset: 2px;
 }
@@ -907,7 +1092,7 @@ body {
 .about-page {
   max-width: 1100px;
   margin: 0 auto;
-  padding: 60px 30px;
+  padding: clamp(32px, 6vw, 60px) clamp(14px, 3vw, 30px);
 }
 
 .about-hero {
@@ -916,7 +1101,7 @@ body {
 }
 
 .about-hero h1 {
-  font-size: 34px;
+  font-size: clamp(24px, 4.5vw, 34px);
   font-weight: 800;
   color: #111827;
   margin-bottom: 16px;
@@ -924,7 +1109,7 @@ body {
 }
 
 .about-subtitle {
-  font-size: 16px;
+  font-size: clamp(14px, 2vw, 16px);
   color: #6b7280;
   max-width: 640px;
   margin: 0 auto 28px auto;
@@ -959,9 +1144,10 @@ body {
   margin-bottom: 32px;
 }
 
+/* [RESPONSIVE] auto-fit: 1, 2 ya 3 columns apne aap */
 .feature-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr));
   gap: 20px;
 }
 
@@ -1010,7 +1196,7 @@ body {
 .landing-page {
   max-width: 1100px;
   margin: 0 auto;
-  padding: 70px 30px 40px;
+  padding: clamp(32px, 6vw, 70px) clamp(14px, 3vw, 30px) clamp(24px, 4vw, 40px);
 }
 
 .landing-hero {
@@ -1030,7 +1216,7 @@ body {
 }
 
 .landing-hero h1 {
-  font-size: 42px;
+  font-size: clamp(26px, 5vw, 42px);
   font-weight: 800;
   color: #111827;
   line-height: 1.25;
@@ -1043,7 +1229,7 @@ body {
 }
 
 .landing-subtitle {
-  font-size: 17px;
+  font-size: clamp(15px, 2vw, 17px);
   color: #6b7280;
   max-width: 600px;
   margin: 0 auto 32px auto;
@@ -1056,6 +1242,7 @@ body {
 
 .landing-cta-primary {
   padding: 15px 32px;
+  max-width: 100%;
   background: linear-gradient(135deg, #3b82f6, #2563eb);
   color: white;
   border: none;
@@ -1076,7 +1263,7 @@ body {
 .landing-stats {
   display: flex;
   justify-content: center;
-  gap: 48px;
+  gap: clamp(24px, 5vw, 48px);
   flex-wrap: wrap;
 }
 
@@ -1088,7 +1275,7 @@ body {
 }
 
 .landing-stat-number {
-  font-size: 30px;
+  font-size: clamp(24px, 4vw, 30px);
   font-weight: 800;
   color: #2563eb;
 }
@@ -1104,11 +1291,13 @@ body {
 .landing-preview-mockup {
   display: flex;
   justify-content: center;
-  margin: 50px 0 70px;
+  margin: clamp(30px, 5vw, 50px) 0 clamp(40px, 6vw, 70px);
 }
 
+/* [RESPONSIVE] fixed width ki jagah width:100% + max-width */
 .mockup-card {
-  width: 340px;
+  width: 100%;
+  max-width: 340px;
   background: white;
   border-radius: 16px;
   padding: 22px;
@@ -1119,6 +1308,7 @@ body {
 .mockup-score {
   display: flex;
   justify-content: space-between;
+  gap: 8px;
   font-size: 13px;
   font-weight: 700;
   color: #374151;
@@ -1174,9 +1364,10 @@ body {
   margin-bottom: 32px;
 }
 
+/* [RESPONSIVE] auto-fit */
 .landing-feature-row {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr));
   gap: 24px;
 }
 
@@ -1207,7 +1398,7 @@ body {
 /* Bottom CTA */
 .landing-bottom-cta {
   text-align: center;
-  padding: 40px 20px;
+  padding: clamp(28px, 5vw, 40px) clamp(14px, 3vw, 20px);
   background: linear-gradient(135deg, #eef2ff, #f8fafc);
   border-radius: 20px;
 }
@@ -1242,7 +1433,7 @@ body {
 
 .how-step {
   flex: 1;
-  min-width: 200px;
+  min-width: min(200px, 100%);
   max-width: 260px;
   text-align: center;
   background: white;
@@ -1376,6 +1567,7 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 12px;
   width: 100%;
   padding: 18px 6px;
   background: none;
@@ -1546,6 +1738,44 @@ body {
   color: #60a5fa;
 }
 
+/* Job match dark */
+.app.dark .jd-card {
+  background: #1e1e1e;
+  color: #eee;
+}
+
+.app.dark .jd-body {
+  border-top-color: #444;
+}
+
+.app.dark .jd-label {
+  color: #cbd5e1;
+}
+
+.app.dark .jd-textarea {
+  background: #2a2a2a;
+  border-color: #444;
+  color: white;
+}
+
+.app.dark .jd-hint,
+.app.dark .jd-count,
+.app.dark .jd-chevron {
+  color: #9ca3af;
+}
+
+.app.dark .jd-chip-found {
+  background: rgba(22, 163, 74, 0.15);
+  color: #86efac;
+  border-color: rgba(22, 163, 74, 0.4);
+}
+
+.app.dark .jd-chip-missing {
+  background: rgba(225, 29, 72, 0.15);
+  color: #fca5a5;
+  border-color: rgba(225, 29, 72, 0.4);
+}
+
 .app.dark .example-banner {
   background: rgba(251, 191, 36, 0.1);
   border-color: rgba(251, 191, 36, 0.3);
@@ -1615,6 +1845,20 @@ body {
 
 .app.dark .navbar-dropdown-item:hover {
   background: rgba(255, 255, 255, 0.08);
+}
+
+.app.dark .navbar-dropdown-footer {
+  border-top-color: #333;
+}
+
+.app.dark .navbar-dropdown-footer button {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.14);
+  color: #e2e8f0;
+}
+
+.app.dark .navbar-dropdown-footer button:hover {
+  background: rgba(255, 255, 255, 0.12);
 }
 
 .app.dark .switch-label {
@@ -1744,7 +1988,20 @@ body {
   }
 }
 
-/* ===== MOBILE RESPONSIVE ===== */
+/* ===== RESPONSIVE ===== */
+
+/* Laptop window chhoti karne par: navbar mein jagah bachao */
+@media (max-width: 1150px) {
+  .navbar {
+    padding: 12px 20px;
+  }
+
+  .navbar-resume-name {
+    display: none;
+  }
+}
+
+/* Tablet / phone */
 @media (max-width: 900px) {
   .app {
     padding: 0 0 20px 0;
@@ -1752,12 +2009,10 @@ body {
 
   .navbar {
     padding: 12px 16px;
-    flex-wrap: wrap;
-    gap: 10px;
   }
 
   .navbar-left {
-    gap: 16px;
+    gap: 6px 16px;
   }
 
   .navbar-logo {
@@ -1765,14 +2020,8 @@ body {
   }
 
   .navbar-right {
-    flex-wrap: wrap;
-    gap: 8px;
     width: 100%;
     justify-content: flex-start;
-  }
-
-  .navbar-resume-name {
-    display: none;
   }
 
   .navbar-btn {
@@ -1833,9 +2082,11 @@ body {
     display: none;
   }
 
+  /* column direction mein flex:1 height ko bigadta hai, isliye reset */
   .form-section,
   .preview-wrapper {
     width: 100%;
+    flex: none;
   }
 
   .preview-wrapper {
@@ -1868,22 +2119,14 @@ body {
   }
 
   /* About / Landing */
-  .feature-grid,
-  .landing-feature-row {
-    grid-template-columns: 1fr;
+  .landing-cta-primary {
+    width: 100%;
+    max-width: 360px;
   }
 
-  .about-hero h1,
-  .landing-hero h1 {
-    font-size: 28px;
-  }
-
-  .landing-stats {
-    gap: 28px;
-  }
-
-  .mockup-card {
-    width: 90%;
+  .how-step {
+    max-width: 100%;
+    width: 100%;
   }
 
   .how-steps {
@@ -1913,14 +2156,23 @@ body {
   }
 }
 
+/* Chhote phone */
 @media (max-width: 480px) {
   .navbar-logo {
-    font-size: 14px;
+    font-size: 15px;
   }
 
   .navbar-btn {
     padding: 6px 10px;
     font-size: 11px;
+  }
+
+  .switch-label {
+    font-size: 12px;
+  }
+
+  .form-section {
+    padding: 16px;
   }
 
   .form-section input,
@@ -1941,179 +2193,89 @@ body {
   .navbar-dropdown {
     right: -10px;
     min-width: 180px;
-    max-width: calc(100vw - 20px);
   }
 
   .skill-input-row {
     flex-direction: column;
   }
 }
-/* ===== JOB MATCH ===== */
-.jd-card {
-  background: white;
-  border-radius: 10px;
-  margin-bottom: 15px;
-  box-shadow: 0 0 8px rgba(0, 0, 0, 0.08);
+/* ===== VERY NARROW SCREENS ===== */
+
+/* Navbar links ab wrap ho sakte hain, "About" kat'ta nahi */
+.navbar-left {
+  min-width: 0;
+  max-width: 100%;
 }
 
-.jd-header {
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 16px 18px;
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-family: inherit;
-  color: inherit;
-}
-
-.jd-title {
-  font-weight: bold;
-  font-size: 15px;
-}
-
-.jd-header-right {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.jd-chevron {
-  color: #6b7280;
-}
-
-.jd-body {
-  padding: 0 18px 18px;
-  border-top: 1px solid #eee;
-}
-
-.jd-label {
-  display: block;
-  margin: 14px 0 6px;
-  font-size: 13px;
-  font-weight: 600;
-  color: #374151;
-}
-
-.jd-textarea {
-  width: 100%;
-  height: 120px;
-  resize: vertical;
-  padding: 10px 12px;
-  border: 1.5px solid #e5e7eb;
-  border-radius: 8px;
-  font-family: inherit;
-  font-size: 13px;
-  color: #1f2937;
-  background: #fafafa;
-}
-
-.jd-textarea:focus {
-  outline: none;
-  border-color: #2563eb;
-  background: white;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-}
-
-.jd-hint {
-  font-size: 12px;
-  color: #6b7280;
-  line-height: 1.5;
-  margin: 12px 0 0;
-}
-
-.jd-count {
-  font-size: 13px;
-  color: #6b7280;
-}
-
-.jd-section-title {
-  font-size: 13px;
-  font-weight: 700;
-  margin: 16px 0 8px;
-}
-
-.jd-chips {
-  display: flex;
+.navbar-links {
   flex-wrap: wrap;
-  gap: 6px;
+  row-gap: 4px;
 }
 
-.jd-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 4px 10px;
-  border-radius: 14px;
-  font-size: 12px;
-  font-weight: 600;
+.mobile-tabs button {
+  min-width: 0;
 }
 
-.jd-chip-found {
-  background: #f0fdf4;
-  color: #166534;
-  border: 1px solid #bbf7d0;
-}
+@media (max-width: 360px) {
+  .navbar {
+    padding: 10px 12px;
+  }
 
-.jd-chip-missing {
-  background: #fef2f2;
-  color: #b91c1c;
-  border: 1px solid #fecaca;
-}
+  .navbar-links {
+    gap: 12px;
+  }
 
-.jd-chip button {
-  background: none;
-  border: none;
-  padding: 0 2px;
-  color: inherit;
-  font-weight: 700;
-  font-size: 14px;
-  line-height: 1;
-  cursor: pointer;
-}
+  .navbar-link {
+    font-size: 13px;
+  }
 
-.jd-header:focus-visible,
-.jd-chip button:focus-visible {
-  outline: 2px solid #2563eb;
-  outline-offset: 2px;
-}
+  /* Edit / Preview tabs ek ke neeche ek */
+  .mobile-tabs {
+    flex-direction: column;
+    padding: 10px 12px 0;
+  }
 
-/* Dark mode */
-.app.dark .jd-card {
-  background: #1e1e1e;
-  color: #eee;
-}
+  .mobile-tabs button {
+    width: 100%;
+    padding: 8px;
+  }
 
-.app.dark .jd-body {
-  border-top-color: #444;
-}
+  .resume-container {
+    padding: 12px;
+    gap: 12px;
+  }
 
-.app.dark .jd-label {
-  color: #cbd5e1;
-}
+  .form-section {
+    padding: 14px;
+  }
 
-.app.dark .jd-textarea {
-  background: #2a2a2a;
-  border-color: #444;
-  color: white;
-}
+  .preview-section {
+    padding: 16px 12px;
+  }
 
-.app.dark .jd-hint,
-.app.dark .jd-count,
-.app.dark .jd-chevron {
-  color: #9ca3af;
-}
+  .template-switcher button {
+    min-width: 0;
+    padding: 8px 4px;
+    font-size: 12px;
+  }
 
-.app.dark .jd-chip-found {
-  background: rgba(22, 163, 74, 0.15);
-  color: #86efac;
-  border-color: rgba(22, 163, 74, 0.4);
-}
+  .landing-page,
+  .about-page {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
 
-.app.dark .jd-chip-missing {
-  background: rgba(225, 29, 72, 0.15);
-  color: #fca5a5;
-  border-color: rgba(225, 29, 72, 0.4);
+  .landing-hero h1,
+  .about-hero h1 {
+    font-size: 22px;
+  }
+
+  .landing-stat {
+    max-width: 120px;
+  }
+
+  .feature-card,
+  .how-step {
+    padding: 16px;
+  }
 }
