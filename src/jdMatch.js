@@ -1,5 +1,6 @@
 // ---- Known skills/terms (inhe tum badha sakte ho) ----
 const SKILL_TERMS = [
+  // Web / frontend
   "javascript",
   "typescript",
   "react",
@@ -14,6 +15,8 @@ const SKILL_TERMS = [
   "bootstrap",
   "redux",
   "next.js",
+  "responsive design",
+  // Languages
   "python",
   "java",
   "c++",
@@ -27,6 +30,7 @@ const SKILL_TERMS = [
   "flutter",
   "android",
   "ios",
+  // Data / backend
   "sql",
   "mysql",
   "postgresql",
@@ -40,6 +44,7 @@ const SKILL_TERMS = [
   "django",
   "flask",
   "spring boot",
+  // Cloud / DevOps
   "docker",
   "kubernetes",
   "aws",
@@ -51,6 +56,7 @@ const SKILL_TERMS = [
   "jenkins",
   "linux",
   "devops",
+  // Process / tools
   "agile",
   "scrum",
   "jira",
@@ -59,6 +65,7 @@ const SKILL_TERMS = [
   "unit testing",
   "jest",
   "selenium",
+  // Data science
   "machine learning",
   "deep learning",
   "data analysis",
@@ -68,11 +75,36 @@ const SKILL_TERMS = [
   "pytorch",
   "power bi",
   "tableau",
+  // CS basics
   "oop",
   "data structures",
   "algorithms",
-  "responsive design",
+  // Marketing / sales
   "seo",
+  "google ads",
+  "google analytics",
+  "social media",
+  "email marketing",
+  "content writing",
+  "lead generation",
+  "crm",
+  "salesforce",
+  "negotiation",
+  // HR / finance / admin
+  "recruitment",
+  "payroll",
+  "budgeting",
+  "financial reporting",
+  "tally",
+  "ms excel",
+  "microsoft excel",
+  "advanced excel",
+  "customer service",
+  "project management",
+  // Design
+  "photoshop",
+  "illustrator",
+  // Soft skills
   "communication",
   "leadership",
   "problem solving",
@@ -109,7 +141,11 @@ const IGNORE = new Set(
   ).split(" "),
 );
 
+// Label ka sahi format (jo yahan nahi hai wo apne aap Title Case ya UPPERCASE ho jata hai)
 const DISPLAY = {
+  git: "Git",
+  vue: "Vue",
+  sass: "Sass",
   node: "Node.js",
   javascript: "JavaScript",
   typescript: "TypeScript",
@@ -128,6 +164,10 @@ const DISPLAY = {
   pytorch: "PyTorch",
   numpy: "NumPy",
   ios: "iOS",
+  "ms excel": "MS Excel",
+  "microsoft excel": "Microsoft Excel",
+  "advanced excel": "Advanced Excel",
+  salesforce: "Salesforce",
 };
 
 const toLabel = (term) => {

@@ -83,6 +83,47 @@ const makeSample = () => ({
   ],
 });
 
+/* ---------- accent color + font options ---------- */
+const ACCENT_COLORS = [
+  { name: "Navy", value: "#1e3a8a" },
+  { name: "Blue", value: "#2563eb" },
+  { name: "Teal", value: "#0f766e" },
+  { name: "Green", value: "#15803d" },
+  { name: "Red", value: "#b91c1c" },
+  { name: "Purple", value: "#7c3aed" },
+  { name: "Orange", value: "#c2410c" },
+  { name: "Black", value: "#111827" },
+];
+
+const FONT_OPTIONS = [
+  { key: "default", label: "Template default", stack: "" },
+  {
+    key: "georgia",
+    label: "Georgia",
+    stack: "Georgia, 'Times New Roman', serif",
+  },
+  { key: "arial", label: "Arial", stack: "Arial, Helvetica, sans-serif" },
+  {
+    key: "calibri",
+    label: "Calibri",
+    stack: "Calibri, 'Segoe UI', Arial, sans-serif",
+  },
+  {
+    key: "times",
+    label: "Times New Roman",
+    stack: "'Times New Roman', Times, serif",
+  },
+  { key: "verdana", label: "Verdana", stack: "Verdana, Geneva, sans-serif" },
+];
+
+// Kharab ya purani saved value aaye to safe default par chale jao
+const normalizeAccent = (c) =>
+  typeof c === "string" && /^#[0-9a-f]{6}$/i.test(c) ? c.toLowerCase() : "";
+const normalizeFont = (k) =>
+  FONT_OPTIONS.some((f) => f.key === k) ? k : "default";
+const normalizeTemplate = (t) =>
+  ["modern", "classic", "minimal"].includes(t) ? t : "modern";
+
 // localStorage kharab ya blocked ho to bhi app crash na ho
 const safeParse = (key, fallback) => {
   try {
@@ -137,9 +178,11 @@ const loadInitial = () => {
   if (saved && typeof saved === "object") {
     return {
       resume: normalizeResume(saved),
-      template: saved.template || "modern",
+      template: normalizeTemplate(saved.template),
       darkMode: !!saved.darkMode,
       atsMode: !!saved.atsMode,
+      accent: normalizeAccent(saved.accent),
+      fontKey: normalizeFont(saved.font),
       resumeName: saved.currentResumeName || "Untitled Resume",
     };
   }
@@ -148,6 +191,8 @@ const loadInitial = () => {
     template: "modern",
     darkMode: false,
     atsMode: false,
+    accent: "",
+    fontKey: "default",
     resumeName: "Example Resume",
   };
 };
@@ -385,6 +430,8 @@ function App() {
   const [template, setTemplate] = useState(initial.template);
   const [atsMode, setAtsMode] = useState(initial.atsMode);
   const [darkMode, setDarkMode] = useState(initial.darkMode);
+  const [accent, setAccent] = useState(initial.accent);
+  const [fontKey, setFontKey] = useState(initial.fontKey);
   const [currentResumeName, setCurrentResumeName] = useState(
     initial.resumeName,
   );
@@ -433,11 +480,13 @@ function App() {
         template,
         darkMode,
         atsMode,
+        accent,
+        font: fontKey,
         currentResumeName,
       });
     }, 500);
     return () => clearTimeout(t);
-  }, [resume, template, darkMode, atsMode, currentResumeName]);
+  }, [resume, template, darkMode, atsMode, accent, fontKey, currentResumeName]);
 
   // ---- Edit helpers (immutable updates, id-based) ----
   // Sample resume edit karte hi banner hat jaye aur naam "Untitled Resume" ho jaye
@@ -482,7 +531,8 @@ function App() {
   };
 
   // ---- Skills ----
-  const addSkills = (raw) => {
+  // clearInput=false: Job Match ke "+" button se add karte waqt input ka text na mite
+  const addSkills = (raw, clearInput = true) => {
     const parts = raw
       .split(",")
       .map((s) => s.trim())
@@ -500,7 +550,7 @@ function App() {
       });
       return { ...prev, skills: [...prev.skills, ...fresh] };
     });
-    setSkillInput("");
+    if (clearInput) setSkillInput("");
   };
   const handleSkillKeyDown = (e) => {
     if (e.key === "Enter" || e.key === ",") {
@@ -546,8 +596,13 @@ function App() {
 
     const list = exists ? savedResumes : [...savedResumes, trimmed];
     const ok =
-      safeSet(`resume_${trimmed}`, { ...resume, template, atsMode }) &&
-      safeSet("savedResumesList", list);
+      safeSet(`resume_${trimmed}`, {
+        ...resume,
+        template,
+        atsMode,
+        accent,
+        font: fontKey,
+      }) && safeSet("savedResumesList", list);
 
     if (!ok) {
       showToast("Couldn't save — browser storage is full or blocked.");
@@ -567,8 +622,10 @@ function App() {
       return;
     }
     setResume(normalizeResume(data));
-    setTemplate(data.template || "modern");
+    setTemplate(normalizeTemplate(data.template));
     setAtsMode(!!data.atsMode);
+    setAccent(normalizeAccent(data.accent));
+    setFontKey(normalizeFont(data.font));
     setCurrentResumeName(resumeName);
     setIsExample(false);
     setErrors({});
@@ -604,6 +661,7 @@ function App() {
     setCurrentResumeName(newName);
     setIsExample(false);
   };
+
   // ---- Export / Import (JSON backup) ----
   const exportResume = () => {
     const payload = {
@@ -612,6 +670,8 @@ function App() {
       name: currentResumeName,
       template,
       atsMode,
+      accent,
+      font: fontKey,
       resume,
     };
     const blob = new Blob([JSON.stringify(payload, null, 2)], {
@@ -653,12 +713,10 @@ function App() {
         return;
 
       setResume(normalizeResume(source));
-      setTemplate(
-        ["modern", "classic", "minimal"].includes(data.template)
-          ? data.template
-          : "modern",
-      );
+      setTemplate(normalizeTemplate(data.template));
       setAtsMode(!!data.atsMode);
+      setAccent(normalizeAccent(data.accent));
+      setFontKey(normalizeFont(data.font));
       setCurrentResumeName(
         str(data.name).trim() ||
           file.name.replace(/\.json$/i, "") ||
@@ -722,6 +780,16 @@ function App() {
     resume.skills.length > 0 ||
     filledProjects.length > 0;
 
+  // ---- Accent color + font (ATS mode mein band) ----
+  const useAccent = !atsMode && accent !== "";
+  const useFont = !atsMode && fontKey !== "default";
+  const fontStack = (FONT_OPTIONS.find((f) => f.key === fontKey) || {}).stack;
+  const previewStyle = {};
+  if (useAccent) previewStyle["--accent"] = accent;
+  if (useFont) previewStyle["--resume-font"] = fontStack;
+  const isCustomAccent =
+    accent !== "" && !ACCENT_COLORS.some((c) => c.value === accent);
+
   return (
     <div className={`app ${darkMode ? "dark" : ""}`}>
       <Navbar
@@ -733,6 +801,8 @@ function App() {
         onLoadResume={loadResume}
         onDeleteResume={deleteResume}
         onRenameResume={renameResume}
+        onExportResume={exportResume}
+        onImportResume={importResume}
         onToggleDarkMode={() => setDarkMode((d) => !d)}
         currentView={currentView}
         onNavigate={navigate}
@@ -1099,9 +1169,11 @@ function App() {
                   </div>
                 )}
               </div>
-              <JDMatch resume={resume} onAddSkill={addSkills} />
 
-              <div className="template-switcher"></div>
+              <JDMatch
+                resume={resume}
+                onAddSkill={(skill) => addSkills(skill, false)}
+              />
 
               <div className="template-switcher">
                 {["modern", "classic", "minimal"].map((t) => (
@@ -1114,6 +1186,84 @@ function App() {
                   </button>
                 ))}
               </div>
+
+              {/* ---- STYLE: accent color + font ---- */}
+              <div className={`style-picker ${atsMode ? "is-disabled" : ""}`}>
+                <div className="style-row">
+                  <span className="style-label">Accent</span>
+                  <div
+                    className="swatches"
+                    role="group"
+                    aria-label="Accent color"
+                  >
+                    <button
+                      type="button"
+                      className={`swatch swatch-default ${accent === "" ? "active" : ""}`}
+                      title="Template default"
+                      aria-label="Template default color"
+                      aria-pressed={accent === ""}
+                      disabled={atsMode}
+                      onClick={() => setAccent("")}
+                    >
+                      A
+                    </button>
+                    {ACCENT_COLORS.map((c) => (
+                      <button
+                        type="button"
+                        key={c.value}
+                        className={`swatch ${accent === c.value ? "active" : ""}`}
+                        style={{ background: c.value }}
+                        title={c.name}
+                        aria-label={`${c.name} accent color`}
+                        aria-pressed={accent === c.value}
+                        disabled={atsMode}
+                        onClick={() => setAccent(c.value)}
+                      ></button>
+                    ))}
+                    <label
+                      className={`swatch swatch-custom ${isCustomAccent ? "active" : ""}`}
+                      title="Pick a custom color"
+                    >
+                      <input
+                        type="color"
+                        aria-label="Custom accent color"
+                        value={accent || "#1e3a8a"}
+                        disabled={atsMode}
+                        onChange={(e) =>
+                          setAccent(e.target.value.toLowerCase())
+                        }
+                      />
+                    </label>
+                  </div>
+                </div>
+
+                <div className="style-row">
+                  <label htmlFor="font-select" className="style-label">
+                    Font
+                  </label>
+                  <select
+                    id="font-select"
+                    className="font-select"
+                    value={fontKey}
+                    disabled={atsMode}
+                    onChange={(e) => setFontKey(e.target.value)}
+                  >
+                    {FONT_OPTIONS.map((f) => (
+                      <option key={f.key} value={f.key}>
+                        {f.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {atsMode && (
+                  <p className="style-note">
+                    ATS-Safe Mode uses plain black text and Arial, so color and
+                    font are turned off.
+                  </p>
+                )}
+              </div>
+
               <label className="ats-toggle">
                 <input
                   type="checkbox"
@@ -1127,7 +1277,8 @@ function App() {
               </button>
 
               <div
-                className={`preview-section template-${template} ${atsMode ? "ats-mode" : ""}`}
+                className={`preview-section template-${template} ${atsMode ? "ats-mode" : ""} ${useAccent ? "has-accent" : ""} ${useFont ? "has-font" : ""}`}
+                style={previewStyle}
                 ref={resumeRef}
               >
                 <h1>{resume.name.trim() || "Your Name"}</h1>

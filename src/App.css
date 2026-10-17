@@ -14,7 +14,7 @@ video {
   max-width: 100%;
 }
 
-/* [RESPONSIVE] kabhi side-scroll na bane (sticky navbar par asar nahi padta) */
+/* kabhi side-scroll na bane (sticky navbar par asar nahi padta) */
 .app {
   padding: 0 0 30px 0;
   overflow-x: clip;
@@ -30,7 +30,6 @@ video {
   align-items: flex-start;
 }
 
-/* [RESPONSIVE] width:50% ki jagah flex + min-width:0 */
 .form-section {
   flex: 1 1 0;
   min-width: 0;
@@ -258,7 +257,7 @@ video {
   margin: auto;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   color: #111;
-  /* [RESPONSIVE] lamba email/link layout na tode */
+  /* lamba email/link layout na tode */
   overflow-wrap: anywhere;
 }
 
@@ -369,6 +368,118 @@ video {
   box-shadow: 0 2px 8px rgba(37, 99, 235, 0.25);
 }
 
+/* ===== STYLE PICKER (accent color + font) ===== */
+.style-picker {
+  background: white;
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-bottom: 12px;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.style-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.style-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+  min-width: 52px;
+}
+
+.swatches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.swatch {
+  position: relative;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border-radius: 50%;
+  border: 2px solid white;
+  box-shadow: 0 0 0 1px #cbd5e1;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  color: #6b7280;
+  background: white;
+  transition: transform 0.15s ease;
+}
+
+.swatch:hover:not(:disabled) {
+  transform: scale(1.12);
+}
+
+.swatch.active {
+  box-shadow: 0 0 0 2px #2563eb;
+}
+
+.swatch:disabled {
+  cursor: not-allowed;
+}
+
+.swatch-custom {
+  background: conic-gradient(red, yellow, lime, aqua, blue, magenta, red);
+  overflow: hidden;
+}
+
+.swatch-custom input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  border: none;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.font-select {
+  flex: 1;
+  min-width: 140px;
+  padding: 7px 10px;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 13px;
+  color: #1f2937;
+  background: #fafafa;
+}
+
+.font-select:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.style-picker.is-disabled .swatches,
+.style-picker.is-disabled .font-select {
+  opacity: 0.45;
+}
+
+.style-note {
+  font-size: 12px;
+  color: #6b7280;
+  line-height: 1.5;
+  margin: 0;
+}
+
 /* ===== MODERN TEMPLATE ===== */
 .template-modern h1 {
   font-family: Georgia, serif;
@@ -437,6 +548,31 @@ video {
   margin: 20px 0;
 }
 
+/* ===== ACCENT COLOR + CUSTOM FONT (ATS mode mein ye classes lagti hi nahi) ===== */
+.preview-section.has-accent h3 {
+  color: var(--accent);
+}
+
+.preview-section.has-accent.template-modern h3,
+.preview-section.has-accent.template-classic h3 {
+  border-bottom-color: var(--accent);
+}
+
+.preview-section.has-accent.template-modern h1,
+.preview-section.has-accent.template-minimal h1 {
+  color: var(--accent);
+}
+
+.preview-section.has-accent.template-minimal .section-divider {
+  border-top-color: var(--accent);
+  opacity: 0.35;
+}
+
+.preview-section.has-font,
+.preview-section.has-font h1 {
+  font-family: var(--resume-font);
+}
+
 /* ===== VALIDATION ===== */
 .input-error {
   border-color: #e11d48 !important;
@@ -466,6 +602,7 @@ video {
 }
 
 .ats-mode h1 {
+  font-family: inherit !important;
   text-align: left !important;
   text-transform: none !important;
   font-style: normal !important;
@@ -786,7 +923,7 @@ video {
 }
 
 /* ===== NAVBAR ===== */
-/* [RESPONSIVE] jagah kam ho to wrap ho, kuch bahar na nikle */
+/* jagah kam ho to wrap ho, kuch bahar na nikle */
 .navbar {
   display: flex;
   justify-content: space-between;
@@ -807,6 +944,8 @@ video {
   align-items: center;
   flex-wrap: wrap;
   gap: 6px 28px;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .navbar-logo {
@@ -822,6 +961,8 @@ video {
 
 .navbar-links {
   display: flex;
+  flex-wrap: wrap;
+  row-gap: 4px;
   gap: 20px;
 }
 
@@ -1083,7 +1224,10 @@ video {
 .item-name:focus-visible,
 .item-delete:focus-visible,
 .jd-header:focus-visible,
-.jd-chip button:focus-visible {
+.jd-chip button:focus-visible,
+.swatch:focus-visible,
+.swatch-custom:focus-within,
+.font-select:focus-visible {
   outline: 2px solid #2563eb;
   outline-offset: 2px;
 }
@@ -1144,7 +1288,7 @@ video {
   margin-bottom: 32px;
 }
 
-/* [RESPONSIVE] auto-fit: 1, 2 ya 3 columns apne aap */
+/* auto-fit: 1, 2 ya 3 columns apne aap */
 .feature-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr));
@@ -1294,7 +1438,6 @@ video {
   margin: clamp(30px, 5vw, 50px) 0 clamp(40px, 6vw, 70px);
 }
 
-/* [RESPONSIVE] fixed width ki jagah width:100% + max-width */
 .mockup-card {
   width: 100%;
   max-width: 340px;
@@ -1364,7 +1507,6 @@ video {
   margin-bottom: 32px;
 }
 
-/* [RESPONSIVE] auto-fit */
 .landing-feature-row {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr));
@@ -1717,6 +1859,41 @@ video {
   border-color: #2563eb;
 }
 
+/* Style picker dark */
+.app.dark .style-picker {
+  background: #1e1e1e;
+  color: #eee;
+}
+
+.app.dark .style-label {
+  color: #cbd5e1;
+}
+
+.app.dark .style-note {
+  color: #9ca3af;
+}
+
+.app.dark .swatch {
+  border-color: #1e1e1e;
+  box-shadow: 0 0 0 1px #555;
+  background: #2a2a2a;
+  color: #cbd5e1;
+}
+
+.app.dark .swatch.active {
+  box-shadow: 0 0 0 2px #60a5fa;
+}
+
+.app.dark .swatch-custom {
+  background: conic-gradient(red, yellow, lime, aqua, blue, magenta, red);
+}
+
+.app.dark .font-select {
+  background: #2a2a2a;
+  border-color: #444;
+  color: white;
+}
+
 .app.dark .score-card {
   background: #1e1e1e;
   color: #eee;
@@ -2038,6 +2215,7 @@ video {
 
   .mobile-tabs button {
     flex: 1;
+    min-width: 0;
     padding: 10px;
     border: 1.5px solid #e5e7eb;
     background: white;
@@ -2199,23 +2377,8 @@ video {
     flex-direction: column;
   }
 }
-/* ===== VERY NARROW SCREENS ===== */
 
-/* Navbar links ab wrap ho sakte hain, "About" kat'ta nahi */
-.navbar-left {
-  min-width: 0;
-  max-width: 100%;
-}
-
-.navbar-links {
-  flex-wrap: wrap;
-  row-gap: 4px;
-}
-
-.mobile-tabs button {
-  min-width: 0;
-}
-
+/* Bahut chhoti screens (≤360px) */
 @media (max-width: 360px) {
   .navbar {
     padding: 10px 12px;
