@@ -5,6 +5,7 @@ import "./App.css";
 import AboutPage from "./AboutPage";
 import LandingPage from "./LandingPage";
 import JDMatch from "./JDMatch.jsx";
+import ScoreBreakdown, { PageLengthNote } from "./ScoreInsights.jsx";
 
 /* =====================================================
    HELPERS (component ke bahar — har render par dobara nahi bante)
@@ -271,6 +272,7 @@ const WEAK_PHRASES = [
 const QUANT_REGEX =
   /(\d+(\.\d+)?\s*(%|\+|x\b|k\b|m\b|ms\b|users?|clients?|customers?|members?|projects?|components?|apis?|pages?|hours?|days?|lakhs?|crores?))|[₹$€£]\s*\d/i;
 
+// Ab har section ke points alag se return hote hain (breakdown ke liye)
 const calculateResumeScore = (resume) => {
   const {
     name,
@@ -285,12 +287,17 @@ const calculateResumeScore = (resume) => {
     projects,
     certifications,
   } = resume;
-  let score = 0;
   const tips = [];
+  let contactPts = 0;
+  let objectivePts = 0;
+  let experiencePts = 0;
+  let educationPts = 0;
+  let skillsPts = 0;
+  let projectsPts = 0;
 
-  // Basic info (20)
+  // Contact info (20)
   if (isRealisticName(name)) {
-    score += 5;
+    contactPts += 5;
     if (name.trim().split(/\s+/).length < 2) {
       tips.push("Add your first and last name");
     }
@@ -300,12 +307,12 @@ const calculateResumeScore = (resume) => {
     tips.push("Add your full name");
   }
 
-  if (isValidEmail(email)) score += 5;
+  if (isValidEmail(email)) contactPts += 5;
   else if (email.trim())
     tips.push("Email format looks incorrect (e.g. name@example.com)");
   else tips.push("Add your email");
 
-  if (isValidPhone(phone)) score += 5;
+  if (isValidPhone(phone)) contactPts += 5;
   else if (phone.trim())
     tips.push(
       "Phone number should have 10 to 13 digits (e.g. +91 98765 43210)",
@@ -315,7 +322,7 @@ const calculateResumeScore = (resume) => {
   const hasValidLink =
     (linkedin.trim() && isValidURL(linkedin)) ||
     (github.trim() && isValidURL(github));
-  if (hasValidLink) score += 5;
+  if (hasValidLink) contactPts += 5;
   else if (linkedin.trim() || github.trim())
     tips.push("LinkedIn/GitHub link format looks incorrect");
   else tips.push("Add a LinkedIn or GitHub link — recruiters often check it");
@@ -329,9 +336,9 @@ const calculateResumeScore = (resume) => {
     objWordCount <= 60 &&
     uniqueWords / objWordCount > 0.4;
 
-  if (isMeaningfulObjective) score += 15;
+  if (isMeaningfulObjective) objectivePts = 15;
   else if (objWordCount > 0) {
-    score += 3;
+    objectivePts = 3;
     tips.push(
       "Career objective should be 15-60 genuine, varied words — avoid repeating the same word",
     );
@@ -349,20 +356,20 @@ const calculateResumeScore = (resume) => {
       e.duration.trim().length >= 3,
   );
   if (filledExperience.length > 0) {
-    score += 10;
+    experiencePts = 10;
     const hasQualityDescription = experience.some(
       (e) => e.description.trim().split(/\s+/).filter(Boolean).length >= 8,
     );
     const hasNumbers = experience.some((e) => QUANT_REGEX.test(e.description));
 
-    if (hasQualityDescription && hasNumbers) score += 15;
+    if (hasQualityDescription && hasNumbers) experiencePts += 15;
     else if (hasQualityDescription) {
-      score += 8;
+      experiencePts += 8;
       tips.push(
         'Add measurable results to your experience (e.g. "improved load time by 30%")',
       );
     } else {
-      score += 3;
+      experiencePts += 3;
       tips.push(
         "Write a proper description (at least 8 words) for your experience",
       );
@@ -391,7 +398,7 @@ const calculateResumeScore = (resume) => {
       e.degree.trim().length >= 2 &&
       /\d{4}/.test(e.year),
   );
-  if (filledEducation.length > 0) score += 15;
+  if (filledEducation.length > 0) educationPts = 15;
   else if (education.some((e) => e.school.trim() || e.degree.trim()))
     tips.push(
       "Fill education properly — school name, degree, and a valid year (e.g. 2021-2025)",
@@ -402,9 +409,9 @@ const calculateResumeScore = (resume) => {
   const validSkills = skills.filter(
     (s) => s.trim().length >= 2 && /[a-zA-Z]/.test(s),
   );
-  if (validSkills.length >= 5) score += 15;
+  if (validSkills.length >= 5) skillsPts = 15;
   else if (validSkills.length > 0) {
-    score += 6;
+    skillsPts = 6;
     tips.push(
       `Add more skills — you have ${validSkills.length}, aim for at least 5`,
     );
@@ -416,7 +423,7 @@ const calculateResumeScore = (resume) => {
       p.title.trim().length >= 3 &&
       p.description.trim().split(/\s+/).filter(Boolean).length >= 5,
   );
-  if (filledProjects.length > 0) score += 10;
+  if (filledProjects.length > 0) projectsPts = 10;
   else if (projects.some((p) => p.title.trim()))
     tips.push(
       "Add a proper project description (at least 5 words), not just a title",
@@ -433,7 +440,25 @@ const calculateResumeScore = (resume) => {
     );
   }
 
-  return { score: Math.min(score, 100), tips };
+  const sections = [
+    { key: "contact", label: "Contact info", points: contactPts, max: 20 },
+    {
+      key: "objective",
+      label: "Career objective",
+      points: objectivePts,
+      max: 15,
+    },
+    { key: "experience", label: "Experience", points: experiencePts, max: 25 },
+    { key: "education", label: "Education", points: educationPts, max: 15 },
+    { key: "skills", label: "Skills", points: skillsPts, max: 15 },
+    { key: "projects", label: "Projects", points: projectsPts, max: 10 },
+  ];
+  const score = Math.min(
+    sections.reduce((sum, s) => sum + s.points, 0),
+    100,
+  );
+
+  return { score, tips, sections };
 };
 
 /* ---------- small components ---------- */
@@ -620,7 +645,11 @@ function App() {
   };
 
   // ---- Score ----
-  const { score: resumeScore, tips: resumeTips } = calculateResumeScore(resume);
+  const {
+    score: resumeScore,
+    tips: resumeTips,
+    sections: scoreSections,
+  } = calculateResumeScore(resume);
   const scoreClass =
     resumeScore >= 80
       ? "score-good"
@@ -1349,6 +1378,9 @@ function App() {
                 )}
               </div>
 
+              {/* ---- SCORE BREAKDOWN (section-wise) ---- */}
+              <ScoreBreakdown sections={scoreSections} />
+
               <JDMatch
                 resume={resume}
                 onAddSkill={(skill) => addSkills(skill, false)}
@@ -1454,6 +1486,9 @@ function App() {
               <button className="download-btn" onClick={handleDownloadClick}>
                 Download PDF
               </button>
+
+              {/* ---- PAGE LENGTH (estimate) ---- */}
+              <PageLengthNote previewRef={resumeRef} />
 
               <div
                 className={`preview-section template-${template} ${atsMode ? "ats-mode" : ""} ${useAccent ? "has-accent" : ""} ${useFont ? "has-font" : ""}`}

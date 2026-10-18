@@ -1,0 +1,207 @@
+/* ===== SCORE BREAKDOWN ===== */
+.insights-card {
+  background: white;
+  border-radius: 10px;
+  margin-bottom: 15px;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.08);
+}
+
+.insights-header {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 18px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  color: inherit;
+}
+
+.insights-header:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+}
+
+.insights-title {
+  font-weight: bold;
+  font-size: 15px;
+}
+
+.insights-chevron {
+  color: #6b7280;
+}
+
+.insights-body {
+  padding: 4px 18px 16px;
+  border-top: 1px solid #eee;
+}
+
+.insights-row {
+  margin-top: 14px;
+}
+
+.insights-row-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+  font-size: 13px;
+}
+
+.insights-name {
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.insights-focus {
+  font-style: normal;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 10px;
+  background: #fff7ed;
+  color: #c2410c;
+  border: 1px solid #fed7aa;
+}
+
+.insights-points {
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.tone-good {
+  color: #16a34a;
+}
+.tone-mid {
+  color: #d97706;
+}
+.tone-low {
+  color: #e11d48;
+}
+
+.insights-track {
+  width: 100%;
+  height: 8px;
+  background: #eee;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.insights-fill {
+  height: 100%;
+  border-radius: 8px;
+  transition: width 0.4s ease;
+}
+
+.fill-good {
+  background: #16a34a;
+}
+.fill-mid {
+  background: #d97706;
+}
+.fill-low {
+  background: #e11d48;
+}
+
+.insights-note {
+  margin: 16px 0 0;
+  font-size: 12px;
+  color: #6b7280;
+  line-height: 1.5;
+}
+
+/* ===== PAGE LENGTH NOTE ===== */
+.page-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  font-size: 13px;
+  line-height: 1.5;
+  border: 1px solid transparent;
+}
+
+.page-note-icon {
+  flex-shrink: 0;
+}
+
+.page-note-hint {
+  opacity: 0.7;
+}
+
+.page-note-ok {
+  background: #f0fdf4;
+  color: #166534;
+  border-color: #bbf7d0;
+}
+
+.page-note-warn {
+  background: #fffbeb;
+  color: #92400e;
+  border-color: #fde68a;
+}
+
+.page-note-bad {
+  background: #fef2f2;
+  color: #b91c1c;
+  border-color: #fecaca;
+}
+
+/* ===== DARK MODE ===== */
+.app.dark .insights-card {
+  background: #1e1e1e;
+  color: #eee;
+}
+
+.app.dark .insights-body {
+  border-top-color: #444;
+}
+
+.app.dark .insights-chevron,
+.app.dark .insights-note {
+  color: #9ca3af;
+}
+
+.app.dark .insights-track {
+  background: #333;
+}
+
+.app.dark .insights-focus {
+  background: rgba(194, 65, 12, 0.18);
+  color: #fdba74;
+  border-color: rgba(194, 65, 12, 0.45);
+}
+
+.app.dark .page-note-ok {
+  background: rgba(22, 163, 74, 0.15);
+  color: #86efac;
+  border-color: rgba(22, 163, 74, 0.4);
+}
+
+.app.dark .page-note-warn {
+  background: rgba(251, 191, 36, 0.1);
+  color: #fbbf24;
+  border-color: rgba(251, 191, 36, 0.3);
+}
+
+.app.dark .page-note-bad {
+  background: rgba(225, 29, 72, 0.15);
+  color: #fca5a5;
+  border-color: rgba(225, 29, 72, 0.4);
+}
+
+/* ===== PRINT: ye cheezein PDF mein nahi aani chahiye ===== */
+@media print {
+  .insights-card,
+  .page-note {
+    display: none;
+  }
+}
