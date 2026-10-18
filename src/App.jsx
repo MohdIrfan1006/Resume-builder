@@ -2,10 +2,12 @@ import { useState, useEffect, useRef } from "react";
 import { useReactToPrint } from "react-to-print";
 import Navbar from "./Navbar";
 import "./App.css";
+import "./DocxButton.css";
 import AboutPage from "./AboutPage";
 import LandingPage from "./LandingPage";
 import JDMatch from "./JDMatch.jsx";
 import ScoreBreakdown, { PageLengthNote } from "./ScoreInsights.jsx";
+import { downloadResumeDocx } from "./exportDocx.js";
 
 /* =====================================================
    HELPERS (component ke bahar — har render par dobara nahi bante)
@@ -272,7 +274,7 @@ const WEAK_PHRASES = [
 const QUANT_REGEX =
   /(\d+(\.\d+)?\s*(%|\+|x\b|k\b|m\b|ms\b|users?|clients?|customers?|members?|projects?|components?|apis?|pages?|hours?|days?|lakhs?|crores?))|[₹$€£]\s*\d/i;
 
-// Ab har section ke points alag se return hote hain (breakdown ke liye)
+// Har section ke points alag se return hote hain (breakdown ke liye)
 const calculateResumeScore = (resume) => {
   const {
     name,
@@ -527,6 +529,7 @@ function App() {
   const [currentView, setCurrentView] = useState(viewFromHash);
   const [saveModal, setSaveModal] = useState({ open: false, value: "" });
   const [toast, setToast] = useState("");
+  const [docxBusy, setDocxBusy] = useState(false);
 
   const toastTimer = useRef();
   const resumeRef = useRef();
@@ -813,7 +816,7 @@ function App() {
     }
   };
 
-  // ---- PDF ----
+  // ---- PDF / Word ----
   const validateForm = () => {
     const newErrors = {};
     if (!resume.name.trim()) newErrors.name = "Name is required";
@@ -835,6 +838,28 @@ function App() {
   });
   const handleDownloadClick = () => {
     if (validateForm()) handlePrint();
+  };
+
+  const handleDocxClick = async () => {
+    if (!validateForm()) return;
+    setDocxBusy(true);
+    try {
+      await downloadResumeDocx(resume, {
+        template,
+        atsMode,
+        accent,
+        fontKey,
+        fileName: resume.name || currentResumeName,
+      });
+      showToast("Word file downloaded");
+    } catch (err) {
+      console.error(err);
+      showToast(
+        "Couldn't create the Word file. Is the 'docx' package installed?",
+      );
+    } finally {
+      setDocxBusy(false);
+    }
   };
 
   // ---- Preview data: sirf bhari hui cheezein dikhao (placeholder PDF mein nahi jayega) ----
@@ -1485,6 +1510,13 @@ function App() {
               </label>
               <button className="download-btn" onClick={handleDownloadClick}>
                 Download PDF
+              </button>
+              <button
+                className="download-btn download-btn-secondary"
+                onClick={handleDocxClick}
+                disabled={docxBusy}
+              >
+                {docxBusy ? "Preparing Word file..." : "Download Word (.docx)"}
               </button>
 
               {/* ---- PAGE LENGTH (estimate) ---- */}
