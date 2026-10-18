@@ -29,6 +29,21 @@ const blankProject = () => ({
   description: "",
   link: "",
 });
+const blankCertification = () => ({
+  id: uid(),
+  name: "",
+  issuer: "",
+  year: "",
+});
+const blankLanguage = () => ({ id: uid(), name: "", level: "" });
+
+const LANGUAGE_LEVELS = [
+  "Native",
+  "Fluent",
+  "Professional",
+  "Intermediate",
+  "Basic",
+];
 
 const emptyResume = () => ({
   name: "",
@@ -42,6 +57,8 @@ const emptyResume = () => ({
   education: [blankEducation()],
   skills: [],
   projects: [blankProject()],
+  certifications: [],
+  languages: [],
 });
 
 const makeSample = () => ({
@@ -80,6 +97,18 @@ const makeSample = () => ({
         "A React-based resume builder with real-time scoring, ATS-safe formatting, and PDF export functionality.",
       link: "github.com/mohdirfan/resume-builder",
     },
+  ],
+  certifications: [
+    {
+      id: uid(),
+      name: "Python for Everybody",
+      issuer: "Coursera",
+      year: "2024",
+    },
+  ],
+  languages: [
+    { id: uid(), name: "English", level: "Fluent" },
+    { id: uid(), name: "Hindi", level: "Native" },
   ],
 });
 
@@ -144,6 +173,7 @@ const safeSet = (key, value) => {
 
 const str = (v) => (typeof v === "string" ? v : "");
 
+// Zaroori sections: data na ho to ek khali block dikhao
 const normalizeList = (list, blank) =>
   Array.isArray(list)
     ? list.map((item) => ({
@@ -152,6 +182,16 @@ const normalizeList = (list, blank) =>
         id: item && item.id ? item.id : uid(),
       }))
     : [blank()];
+
+// Optional sections (certifications, languages): data na ho to khali list
+const normalizeOptionalList = (list, blank) =>
+  Array.isArray(list)
+    ? list.map((item) => ({
+        ...blank(),
+        ...item,
+        id: item && item.id ? item.id : uid(),
+      }))
+    : [];
 
 // Purane saved data (bina id wale) ko bhi sahi format mein convert karta hai
 const normalizeResume = (data) => {
@@ -170,6 +210,8 @@ const normalizeResume = (data) => {
       ? d.skills.filter((s) => typeof s === "string" && s.trim())
       : [],
     projects: normalizeList(d.projects, blankProject),
+    certifications: normalizeOptionalList(d.certifications, blankCertification),
+    languages: normalizeOptionalList(d.languages, blankLanguage),
   };
 };
 
@@ -241,6 +283,7 @@ const calculateResumeScore = (resume) => {
     education,
     skills,
     projects,
+    certifications,
   } = resume;
   let score = 0;
   const tips = [];
@@ -379,6 +422,16 @@ const calculateResumeScore = (resume) => {
       "Add a proper project description (at least 5 words), not just a title",
     );
   else tips.push("Add at least one project — especially useful for freshers");
+
+  // Certifications (sirf optional tip, score par asar nahi)
+  const hasCertification = (certifications || []).some(
+    (c) => c.name.trim().length >= 3,
+  );
+  if (!hasCertification) {
+    tips.push(
+      "Optional: add certifications or online courses — they help freshers stand out",
+    );
+  }
 
   return { score: Math.min(score, 100), tips };
 };
@@ -771,6 +824,10 @@ function App() {
   const filledProjects = resume.projects.filter(
     (p) => p.title.trim() || p.description.trim(),
   );
+  const filledCertifications = resume.certifications.filter(
+    (c) => c.name.trim() || c.issuer.trim(),
+  );
+  const filledLanguages = resume.languages.filter((l) => l.name.trim());
   const hasAnyContent =
     contactParts.length > 0 ||
     linkParts.length > 0 ||
@@ -778,7 +835,9 @@ function App() {
     filledExperience.length > 0 ||
     filledEducation.length > 0 ||
     resume.skills.length > 0 ||
-    filledProjects.length > 0;
+    filledProjects.length > 0 ||
+    filledCertifications.length > 0 ||
+    filledLanguages.length > 0;
 
   // ---- Accent color + font (ATS mode mein band) ----
   const useAccent = !atsMode && accent !== "";
@@ -1127,6 +1186,126 @@ function App() {
               >
                 + Add Project
               </button>
+
+              {/* ---- CERTIFICATIONS ---- */}
+              <h2>Certifications</h2>
+              {resume.certifications.length === 0 && (
+                <p className="empty-hint">
+                  Optional — add certificates or online courses (Coursera,
+                  NPTEL, AWS, Google...).
+                </p>
+              )}
+              {resume.certifications.map((cert) => (
+                <div className="dynamic-block" key={cert.id}>
+                  <Field
+                    id={`cert-${cert.id}-name`}
+                    label="Certification / Course"
+                    type="text"
+                    placeholder="e.g. AWS Cloud Practitioner"
+                    value={cert.name}
+                    onChange={(e) =>
+                      updateItem(
+                        "certifications",
+                        cert.id,
+                        "name",
+                        e.target.value,
+                      )
+                    }
+                  />
+                  <Field
+                    id={`cert-${cert.id}-issuer`}
+                    label="Issued by"
+                    type="text"
+                    placeholder="e.g. Amazon Web Services"
+                    value={cert.issuer}
+                    onChange={(e) =>
+                      updateItem(
+                        "certifications",
+                        cert.id,
+                        "issuer",
+                        e.target.value,
+                      )
+                    }
+                  />
+                  <Field
+                    id={`cert-${cert.id}-year`}
+                    label="Year"
+                    type="text"
+                    placeholder="e.g. 2024"
+                    value={cert.year}
+                    onChange={(e) =>
+                      updateItem(
+                        "certifications",
+                        cert.id,
+                        "year",
+                        e.target.value,
+                      )
+                    }
+                  />
+                  <button
+                    className="remove-btn"
+                    onClick={() => removeItem("certifications", cert.id)}
+                  >
+                    Remove
+                  </button>
+                </div>
+              ))}
+              <button
+                className="add-btn"
+                onClick={() => addItem("certifications", blankCertification)}
+              >
+                + Add Certification
+              </button>
+
+              {/* ---- LANGUAGES ---- */}
+              <h2>Languages</h2>
+              {resume.languages.length === 0 && (
+                <p className="empty-hint">
+                  Optional — add the languages you can speak or write.
+                </p>
+              )}
+              <datalist id="language-levels">
+                {LANGUAGE_LEVELS.map((level) => (
+                  <option key={level} value={level} />
+                ))}
+              </datalist>
+              {resume.languages.map((lang) => (
+                <div className="dynamic-block" key={lang.id}>
+                  <Field
+                    id={`lang-${lang.id}-name`}
+                    label="Language"
+                    type="text"
+                    placeholder="e.g. English"
+                    value={lang.name}
+                    onChange={(e) =>
+                      updateItem("languages", lang.id, "name", e.target.value)
+                    }
+                  />
+                  <Field
+                    id={`lang-${lang.id}-level`}
+                    label="Level"
+                    type="text"
+                    list="language-levels"
+                    placeholder="Pick a level or type your own"
+                    value={lang.level}
+                    onChange={(e) =>
+                      updateItem("languages", lang.id, "level", e.target.value)
+                    }
+                  />
+                  <button
+                    className="remove-btn"
+                    onClick={() => removeItem("languages", lang.id)}
+                  >
+                    Remove
+                  </button>
+                </div>
+              ))}
+              <button
+                className="add-btn"
+                onClick={() => addItem("languages", blankLanguage)}
+              >
+                + Add Language
+              </button>
             </div>
 
             {/* RIGHT SIDE - RESUME PREVIEW */}
@@ -1395,6 +1574,42 @@ function App() {
                         )}
                       </div>
                     ))}
+                  </>
+                )}
+
+                {filledCertifications.length > 0 && (
+                  <>
+                    <hr className="section-divider" />
+                    <h3>Certifications</h3>
+                    {filledCertifications.map((cert) => {
+                      const sub = [cert.issuer.trim(), cert.year.trim()]
+                        .filter(Boolean)
+                        .join(" | ");
+                      return (
+                        <div className="preview-block" key={cert.id}>
+                          {cert.name.trim() && (
+                            <p className="block-title">{cert.name.trim()}</p>
+                          )}
+                          {sub && <p className="block-sub">{sub}</p>}
+                        </div>
+                      );
+                    })}
+                  </>
+                )}
+
+                {filledLanguages.length > 0 && (
+                  <>
+                    <hr className="section-divider" />
+                    <h3>Languages</h3>
+                    <p>
+                      {filledLanguages
+                        .map((l) =>
+                          l.level.trim()
+                            ? `${l.name.trim()} (${l.level.trim()})`
+                            : l.name.trim(),
+                        )
+                        .join(", ")}
+                    </p>
                   </>
                 )}
               </div>

@@ -193,6 +193,7 @@ const termRegex = (term, flags = "") =>
 const countTerm = (text, term) =>
   (text.match(termRegex(term, "g")) || []).length;
 
+// Resume ka poora text (certifications aur languages bhi shamil)
 export const resumeToText = (resume) =>
   [
     resume.objective,
@@ -200,6 +201,8 @@ export const resumeToText = (resume) =>
     ...resume.education.flatMap((e) => [e.degree, e.school]),
     ...resume.skills,
     ...resume.projects.flatMap((p) => [p.title, p.description]),
+    ...(resume.certifications || []).flatMap((c) => [c.name, c.issuer]),
+    ...(resume.languages || []).map((l) => l.name),
   ].join(" \n ");
 
 export const analyzeJD = (jdText, resume) => {
